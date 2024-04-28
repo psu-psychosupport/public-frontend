@@ -7,10 +7,10 @@ import IconSearch from '~/assets/search';
 
 export default function ComponentSearch() {
   return (
-    <Container disableGutters sx={{display: "flex", alignItems: "center", gap: 2, mt: 2, mb: 4}}>
+    <Container disableGutters sx={{display: "flex", alignItems: "center", gap: 1, mt: 2, mb: 4}}>
       <InputBase
         className='inputSearch'
-        sx={{ ml: 1, flex: 1, paddingY: 1, paddingX: 2, bgcolor: "#ffffff", borderRadius: "4px", color: "#496CC6" }}
+        sx={{flex: 1, paddingY: 1, paddingX: 2, bgcolor: "#ffffff", borderRadius: "4px", color: "#496CC6" }}
         fullWidth={true}
         placeholder="Что интересует?"
         inputProps={{ 'aria-label': 'search google maps' }}
