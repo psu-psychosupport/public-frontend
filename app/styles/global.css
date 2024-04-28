@@ -25,12 +25,24 @@ body {
   grid-template-columns: repeat(2, 1fr);
 }
 
+.containerSection {
+  margin-top: 12px;
+  column-count: 1;
+  column-gap: 48px;
+}
+
 @media (min-width: 810px) {
   .containerQuestion {
     margin-top: 12px;
     display: grid;
     gap: 6px;
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .containerSection {
+    margin-top: 12px;
+    column-count: 2;
+    column-gap: 48px;
   }
 }
 
@@ -55,4 +67,22 @@ body {
   justify-content: center;
   text-align: center;
   padding: 10% 5% 10% 5%;
+}
+
+.itemSection {
+  width: 100%;
+  display: inline-block;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+}
+
+.itemNameSection {
+  background-color: white;
+  padding-left: 2%;
+  border-radius: 4px;
+  display: flex;
+  overflow-wrap: break-word;
+  word-breaK:break-word;
+  align-items: center;
+  margin-bottom: 1%;
 }
