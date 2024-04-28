@@ -5,7 +5,7 @@ const theme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#556cd6",
+      main: "#496CC6",
     },
     secondary: {
       main: "#19857b",
@@ -14,6 +14,12 @@ const theme = createTheme({
       main: colors.red.A400,
     },
   },
+  typography: {
+    fontFamily: [
+      'Inter',
+      'sans-serif',
+    ].join(','),
+  }
 });
 
 export default theme;

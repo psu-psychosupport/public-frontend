@@ -10,6 +10,7 @@ import { getMuiLinks } from "./mui/getMuiLinks";
 import { MuiMeta } from "./mui/MuiMeta";
 import { LinksFunction } from "@remix-run/node";
 import { MuiDocument } from "./mui/MuiDocument";
+import "./styles/global.css";
 
 export const links: LinksFunction = () => [...getMuiLinks()];
 
