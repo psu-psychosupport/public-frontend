@@ -1,15 +1,16 @@
 import type { MetaFunction } from "@remix-run/node";
+import { Link } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "PsychoSupport" },
-    { name: "description", content: "Welcome to PsychoSupport website!" },
+    { title: "New Remix App" },
+    { name: "description", content: "Welcome to Remix!" },
   ];
 };
 
 export default function Index() {
   return (
-    <div>
+    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Welcome to Remix</h1>
       <ul>
         <li>
@@ -36,6 +37,7 @@ export default function Index() {
           </a>
         </li>
       </ul>
+      <Link to="/mui">Go to Mui Example</Link>
     </div>
   );
 }
