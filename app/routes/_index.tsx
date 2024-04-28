@@ -18,7 +18,7 @@ export default function Index() {
   return (
     <Container maxWidth={false} disableGutters>
       <Header />
-      <Container disableGutters sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+      <Container sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
         <Search />
         <PopularQuestions />
         <AllSections />

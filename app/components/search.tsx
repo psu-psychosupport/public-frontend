@@ -1,9 +1,5 @@
-import { styled, alpha } from '@mui/material/styles';
-import { AppBar, Box, Toolbar, Typography, Button, IconButton, Icon, Container, InputBase, TextField  } from "@mui/material";
-import { Menu } from '@mui/icons-material';
-import { Search } from '@mui/icons-material';
+import { IconButton, Container, InputBase } from "@mui/material";
 import IconSearch from '~/assets/search';
-
 
 export default function ComponentSearch() {
   return (
@@ -13,7 +9,7 @@ export default function ComponentSearch() {
         sx={{flex: 1, paddingY: 1, paddingX: 2, bgcolor: "#ffffff", borderRadius: "4px", color: "#496CC6" }}
         fullWidth={true}
         placeholder="Что интересует?"
-        inputProps={{ 'aria-label': 'search google maps' }}
+        inputProps={{ 'aria-label': 'Что интересует?' }}
       />
       <IconButton 
         className='buttonSearch' 

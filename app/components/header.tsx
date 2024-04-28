@@ -1,4 +1,4 @@
-import { AppBar, Box, Toolbar, Typography, Button, IconButton, Icon, Container } from "@mui/material";
+import { AppBar, Box, Container } from "@mui/material";
 import IconLogo from '~/assets/logo';
 import IconBookmark from '~/assets/bookmark';
 
@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{bgcolor: "#303044"}}>
-        <Container disableGutters sx={{display: "flex", justifyContent: "space-between", alignItems: "center", height: 54}}>
+        <Container sx={{display: "flex", justifyContent: "space-between", alignItems: "center", height: 54}}>
           <IconLogo />
 
           <Box display={'flex'} gap={2}>
