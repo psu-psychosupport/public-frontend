@@ -2,3 +2,18 @@ body {
   background: linear-gradient(#D0EEFF, #D7D2FF) fixed;
 }
 
+.inputSearch {
+  --box-shadow-color: #638EFF; /* Declaring the variable */
+    box-shadow: 0px 0px 7px var(--box-shadow-color) !important;
+}
+
+.buttonSearch {
+  --box-shadow-color: #638EFF; /* Declaring the variable */
+  box-shadow: 0px 0px 7px var(--box-shadow-color) !important;
+}
+
+.buttonSearch:hover {
+  background-color: white !important;
+  opacity: 80%;
+}
+
