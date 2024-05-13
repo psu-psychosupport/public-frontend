@@ -1,5 +1,8 @@
 body {
   background: linear-gradient(#D0EEFF, #D7D2FF) fixed;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 .inputSearch {
@@ -13,6 +16,11 @@ body {
 }
 
 .buttonSearch:hover {
+  background-color: white !important;
+  opacity: 80%;
+}
+
+.buttonIcon:hover {
   background-color: white !important;
   opacity: 80%;
 }
