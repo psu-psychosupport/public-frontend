@@ -1,28 +1,30 @@
-import React, { useState } from "react";
+import React from "react";
 import { Typography } from "@mui/material";
+import { IPost } from "~/api/types/content";
+import getPostName from "~/utils/getPostName";
+import { Link } from "@remix-run/react";
 
-export default function PopularQuestions() {
-	const [questions, setQuestions] = useState<string[]>([
-    "Как обратиться и написать письмо преподавателю, сотруднику деканата",
-    "Что делать если потерял пароль от ЕТИС",
-    "Где и как можно получить психологическую помощь в ПГНИУ",
-    "Телефоны доверия, горячие линии города Перми и Пермского края",
-    "Как обратиться и написать письмо преподавателю, сотруднику деканата",
-    "Что делать если потерял пароль от ЕТИС",
-    "Где и как можно получить психологическую помощь в ПГНИУ",
-    "Телефоны доверия, горячие линии города Перми и Пермского края",
-  ]);
-
+export default function PopularQuestions({ posts }: { posts: IPost[] }) {
   return (
     <React.Fragment>
-      <Typography variant="h4" color={"#303044"} mt={4}>Популярные вопросы</Typography>
+      <Typography variant="h4" color={"#303044"} mt={4}>
+        Популярные вопросы
+      </Typography>
       <div className="containerQuestion">
-        {questions && questions.map(question =>
-          <div key={question} className="itemQuestion">
-            <p style={{color: "#496CC6", fontSize: 18}}>{question}</p>
-          </div>
-        )}
+        {posts &&
+          posts.map((post) => (
+            <Link
+              className="itemQuestion"
+              to={`/post/${post.id}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+              key={post.id}
+            >
+              <p style={{ color: "#496CC6", fontSize: 18 }}>
+                {getPostName(post)}
+              </p>
+            </Link>
+          ))}
       </div>
     </React.Fragment>
-  )
+  );
 }
