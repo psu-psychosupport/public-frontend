@@ -14,7 +14,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
 
   return (
-    <Container maxWidth={false} disableGutters>
+    <Container sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
       <Search />
       <PopularQuestions />
       <AllSections />

@@ -13,16 +13,16 @@ export default function PopularQuestions() {
     "Телефоны доверия, горячие линии города Перми и Пермского края",
   ]);
 
-	return (
-		<React.Fragment>
-			<Typography variant="h4" color={"#303044"}>Популярные вопросы</Typography>
-			<div className="containerQuestion">
-				{questions && questions.map(question =>
-					<div className="itemQuestion">
-						<p style={{color: "#496CC6", fontSize: 18}}>{question}</p>
-					</div>
-				)}
-			</div>
-		</React.Fragment>
-	)
+  return (
+    <React.Fragment>
+      <Typography variant="h4" color={"#303044"} mt={4}>Популярные вопросы</Typography>
+      <div className="containerQuestion">
+        {questions && questions.map(question =>
+          <div key={question} className="itemQuestion">
+            <p style={{color: "#496CC6", fontSize: 18}}>{question}</p>
+          </div>
+        )}
+      </div>
+    </React.Fragment>
+  )
 }

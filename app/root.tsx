@@ -29,7 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Header />
-        <Container sx={{display: "flex", flexGrow: 1, justifyContent: "center"}}>
+        <Container maxWidth={"xl"} sx={{display: "flex", flexGrow: 1, justifyContent: "center"}}>
           {children}
         </Container>
         <Footer />

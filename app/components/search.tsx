@@ -3,7 +3,7 @@ import IconSearch from '~/assets/search';
 
 export default function ComponentSearch() {
   return (
-    <Container disableGutters sx={{display: "flex", alignItems: "center", gap: 1, }}>
+    <Container maxWidth={false} disableGutters sx={{display: "flex", alignItems: "center", gap: 1, }}>
       <InputBase
         className='inputSearch'
         sx={{flex: 1, paddingY: 1, paddingX: 2, bgcolor: "#ffffff", borderRadius: "4px", color: "#496CC6" }}

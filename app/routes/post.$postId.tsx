@@ -42,7 +42,7 @@ export default function Post() {
   }
 
   return (
-    <Container sx={{display: "flex", flexDirection: "column", mt: 1}}>
+    <Container maxWidth={"xl"} disableGutters sx={{display: "flex", flexDirection: "column", mt: 1}}>
       <Stack sx={{alignItems: "center", mb: 2, gap: 1}} direction={"row"}>
         <IconButton
           className='buttonIcon'
