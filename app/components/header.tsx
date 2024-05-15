@@ -8,7 +8,9 @@ export default function Header() {
     <Box sx={{mb: 2}}>
       <AppBar position="static" sx={{bgcolor: "#303044"}}>
         <Container sx={{display: "flex", justifyContent: "space-between", alignItems: "center", height: 54}}>
-          <IconLogo />
+          <Link to={"/"}>
+            <IconLogo />
+          </Link>
 
           <Box display={'flex'} gap={2}>
             <IconBookmark />
