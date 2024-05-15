@@ -9,7 +9,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function Login() {
+export default function Register() {
   return (
     <Box
       sx={{

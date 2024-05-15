@@ -8,7 +8,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function Login() {
+export default function AccountConfirm() {
   return (
     <Container
       maxWidth={"xs"}
