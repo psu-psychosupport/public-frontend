@@ -102,6 +102,7 @@ export default function Login() {
             alignSelf: "center",
             fontSize: 18,
             backgroundColor: "#638EFF",
+            boxShadow: "0px 0px 7px #638EFF",
           }}
         >
           Зарегистрироваться
