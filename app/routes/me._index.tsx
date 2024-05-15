@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography, Box, Button } from "@mui/material";
 
-export default function Myaccount() {
+export default function MyaccountUser() {
   return (
     <React.Fragment>
       <Typography fontSize={30} color={"#496CC6"} mb={2}>Личная информация</Typography>

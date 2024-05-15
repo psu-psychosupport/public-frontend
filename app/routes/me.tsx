@@ -1,7 +1,7 @@
 import { Container, Box, Stack } from "@mui/material";
 import { Link, Outlet } from "@remix-run/react";
 
-export default function Myaccount() {
+export default function MyaccountLayout() {
   return (
     <Container sx={{display: "flex", gap: 2, flexGrow: 1, pt: 2.5, pb: 3}}>
       <Stack 

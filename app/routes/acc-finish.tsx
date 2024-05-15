@@ -9,7 +9,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function Login() {
+export default function AccountFinish() {
   return (
     <Container
       maxWidth={"xs"}
@@ -41,7 +41,7 @@ export default function Login() {
         <Link
           to={"/login"}
           style={{
-            marginBottom: 2,
+            marginBottom: 30,
             padding: "2% 20% 2% 20%",
             width: "fit-content",
             fontSize: 18,
