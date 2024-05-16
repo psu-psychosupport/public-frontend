@@ -21,53 +21,58 @@ export default function AllSections({
       </Typography>
       <div className="containerSection">
         {categories &&
-          categories.map((category) => (
-            <div key={category.id} className="itemSection">
-              <div className="itemNameSection">
-                <LinkWrapper category={category}>
-                  <p
-                    style={{
-                      color: "#496CC6",
-                      fontSize: 18,
-                      margin: "1% 2% 1% 2%",
-                    }}
-                  >
-                    {category.name}
-                  </p>
-                </LinkWrapper>
-              </div>
-              {category.subcategories &&
-                category.subcategories.map(
-                  (subcategory) =>
-                    subcategory.post && (
-                      <Container
-                        key={subcategory.id}
-                        disableGutters
-                        sx={{
-                          pl: "6%",
-                          display: "flex",
-                          alignItems: "flex-start",
-                          gap: 1.2,
-                          mb: 1,
+          categories.map(
+            (category) =>
+              (category.post ||
+                (category.subcategories &&
+                  !!category.subcategories.filter((sub) => sub.post).length)) && (
+                <div key={category.id} className="itemSection">
+                  <div className="itemNameSection">
+                    <LinkWrapper category={category}>
+                      <p
+                        style={{
+                          color: "#496CC6",
+                          fontSize: 18,
+                          margin: "1% 2% 1% 2%",
                         }}
                       >
-                        <Box
-                          mt={1}
-                          minWidth={"9px"}
-                          height={"11px"}
-                          borderRadius={"4px"}
-                          bgcolor={colors[getRandomInt(colors.length - 1)]}
-                        />
-                        <LinkWrapper subcategory={subcategory}>
-                          <Typography color={"#303044"} fontSize={18}>
-                            {subcategory.name}
-                          </Typography>
-                        </LinkWrapper>
-                      </Container>
-                    ),
-                )}
-            </div>
-          ))}
+                        {category.name}
+                      </p>
+                    </LinkWrapper>
+                  </div>
+                  {category.subcategories &&
+                    category.subcategories.map(
+                      (subcategory) =>
+                        subcategory.post && (
+                          <Container
+                            key={subcategory.id}
+                            disableGutters
+                            sx={{
+                              pl: "6%",
+                              display: "flex",
+                              alignItems: "flex-start",
+                              gap: 1.2,
+                              mb: 1,
+                            }}
+                          >
+                            <Box
+                              mt={1}
+                              minWidth={"9px"}
+                              height={"11px"}
+                              borderRadius={"4px"}
+                              bgcolor={colors[getRandomInt(colors.length - 1)]}
+                            />
+                            <LinkWrapper subcategory={subcategory}>
+                              <Typography color={"#303044"} fontSize={18}>
+                                {subcategory.name}
+                              </Typography>
+                            </LinkWrapper>
+                          </Container>
+                        )
+                    )}
+                </div>
+              )
+          )}
       </div>
     </React.Fragment>
   );
