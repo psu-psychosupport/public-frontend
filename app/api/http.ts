@@ -39,7 +39,7 @@ export default class HttpClient {
       data,
       file,
       asFormData,
-    }: { data?: object; file?: File; asFormData?: boolean } = {},
+    }: { data?: object; file?: File; asFormData?: boolean } = {}
   ): Promise<IApiResponse<T>> {
     let payload = undefined;
 
@@ -87,7 +87,7 @@ export default class HttpClient {
       };
 
       console.error(
-        `HTTP Error with code ${error.code}. Message: ${error.message}`,
+        `HTTP Error with code ${error.code}. Message: ${error.message}`
       );
       return { error };
     }
@@ -105,6 +105,13 @@ export default class HttpClient {
   }) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
+  }
+
+  getTokens() {
+    return {
+      accessToken: this.accessToken,
+      refreshToken: this.refreshToken,
+    };
   }
 
   async refreshAccessToken() {

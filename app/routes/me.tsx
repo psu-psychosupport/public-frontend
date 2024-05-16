@@ -1,5 +1,20 @@
 import { Container, Box, Stack } from "@mui/material";
-import { Link, Outlet } from "@remix-run/react";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { Link, Outlet, redirect } from "@remix-run/react";
+import { httpClient } from "~/api/http";
+
+export async function loader({request}: LoaderFunctionArgs) {
+  if (request.url.endsWith("/signin")) return null;
+  const session = await sessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
+  const accessToken = session.get("access_token");
+  const refreshToken = session.get("refresh_token");
+
+  if (!accessToken || !refreshToken) throw redirect("/signin");
+
+  return null;
+}
 
 export default function MyaccountLayout() {
   return (

@@ -1,6 +1,7 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Box, Typography, Button, InputBase } from "@mui/material";
 import { Form, Link } from "@remix-run/react";
+import getUser from "~/utils/getUser";
 
 export const meta: MetaFunction = () => {
   return [
@@ -9,19 +10,23 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  return await getUser(request);
+}
+
 export default function Register() {
   return (
     <Box
       sx={{
         marginTop: 8,
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         bgcolor: "white",
         p: 3,
         borderRadius: "4px",
         boxShadow: "0px 0px 7px #638EFF",
         height: "fit-content",
-        gap: 1
+        gap: 1,
       }}
     >
       <Typography component="h5" variant="h5" color={"#496CC6"} fontSize={30}>
@@ -32,13 +37,14 @@ export default function Register() {
         Адрес электронной почты уже зарегистрирован
       </Typography>
 
-      <Form 
+      <Form
         method="post"
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "16px"
-        }}>
+          gap: "16px",
+        }}
+      >
         <InputBase
           required
           fullWidth
@@ -73,7 +79,7 @@ export default function Register() {
             boxShadow: "0px 0px 7px #638EFF",
           }}
         />
-         <InputBase
+        <InputBase
           required
           fullWidth
           name="password-second"
@@ -108,14 +114,14 @@ export default function Register() {
           Зарегистрироваться
         </Button>
       </Form>
-      
-      <Link 
+
+      <Link
         to={"#"}
         style={{
-          "textDecoration": "none",
+          textDecoration: "none",
           fontSize: 18,
           color: "#496CC6",
-          alignSelf: "center"
+          alignSelf: "center",
         }}
       >
         Уже зарегистрированы? Войдите
