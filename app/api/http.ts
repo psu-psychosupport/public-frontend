@@ -5,7 +5,7 @@ import { ICategory, IPost } from "~/api/types/content";
 import { IUser } from "~/api/types/users";
 import { IUserForm } from "~/api/types/payloads";
 
-export const API_URL = "http://localhost:8000" //"https://stoboi.damego.ru/api";
+export const API_URL = "http://localhost:8000"; //"https://stoboi.damego.ru/api";
 
 export interface IApiError {
   code: ErrorResponseCodes;
@@ -39,7 +39,7 @@ export default class HttpClient {
       data,
       file,
       asFormData,
-    }: { data?: object; file?: File; asFormData?: boolean } = {}
+    }: { data?: object; file?: File; asFormData?: boolean } = {},
   ): Promise<IApiResponse<T>> {
     let payload = undefined;
 
@@ -87,7 +87,7 @@ export default class HttpClient {
       };
 
       console.error(
-        `HTTP Error with code ${error.code}. Message: ${error.message}`
+        `HTTP Error with code ${error.code}. Message: ${error.message}`,
       );
       return { error };
     }
@@ -146,8 +146,19 @@ export default class HttpClient {
   getMe() {
     return this.request<IUser>("GET", "/users/me");
   }
-  updateUser(userId: number, user: IUserForm) {
-    return this.request<IUser>("PATCH", `/users/${userId}`, { data: user });
+
+  requestChangeUserEmail() {
+    return this.request<string>("PATCH", `/request-change-email`, );
+  }
+
+  changeUserEmail(email: string, token: string) {
+    return this.request<null>("PATCH", `/change-email`, { data: { email } });
+  }
+
+  recoveryPassword(userId: number, token: string, password: string) {
+    return this.request<null>("PATCH", `/change-password`, {
+      data: { password },
+    });
   }
 
   getCategories() {

@@ -1,51 +1,75 @@
-import { Container, Box, Stack } from "@mui/material";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, Outlet, redirect } from "@remix-run/react";
+import { Container, Stack } from "@mui/material";
+import { json, LoaderFunctionArgs } from "@remix-run/node";
+import { Link, Outlet, redirect, useLoaderData } from "@remix-run/react";
 import { httpClient } from "~/api/http";
+import { sessionStorage } from "~/sessions";
+import { useMemo } from "react";
 
-export async function loader({request}: LoaderFunctionArgs) {
-  if (request.url.endsWith("/signin")) return null;
+export async function loader({ request }: LoaderFunctionArgs) {
   const session = await sessionStorage.getSession(
     request.headers.get("cookie"),
   );
   const accessToken = session.get("access_token");
   const refreshToken = session.get("refresh_token");
 
-  if (!accessToken || !refreshToken) throw redirect("/signin");
+  if (!accessToken || !refreshToken) throw redirect("/login");
 
-  return null;
+  httpClient.setTokens({ accessToken, refreshToken });
+
+  const response = await httpClient.getMe();
+  if (response.error) {
+    if (!refreshToken) throw redirect("/signin");
+    const res = await httpClient.refreshAccessToken();
+    if (res.error) throw redirect("/signin");
+    session.set("access_token", res.data?.access_token);
+    const headers = new Headers();
+    headers.append("Set-Cookie", await sessionStorage.commitSession(session));
+    throw redirect(request.url, { headers });
+  }
+  return json(response.data);
 }
 
-export default function MyaccountLayout() {
+export default function MyAccountLayout() {
+  const user = useLoaderData<typeof loader>();
+
   return (
-    <Container sx={{display: "flex", gap: 2, flexGrow: 1, pt: 2.5, pb: 3}}>
-      <Stack 
-        spacing={1.5} pt={3} pr={4} pl={3} bgcolor={"#FFFFFF"} 
+    <Container sx={{ display: "flex", gap: 2, flexGrow: 1, pt: 2.5, pb: 3 }}>
+      <Stack
+        spacing={1.5}
+        pt={3}
+        pr={4}
+        pl={3}
+        bgcolor={"#FFFFFF"}
         sx={{
           borderRadius: "4px",
           boxShadow: "0px 0px 7px #638EFF",
-          fontSize: 18
+          fontSize: 18,
         }}
       >
-        <Link
-          to={"/me"}
-          style={{textDecoration: "none", color: "#303044"}}
-        >Личная информация</Link>
+        <Link to={"/me"} style={{ textDecoration: "none", color: "#303044" }}>
+          Личная информация
+        </Link>
         <Link
           to={"/me/interface"}
-          style={{textDecoration: "none", color: "#303044"}}
-        >Интерфейс</Link>
+          style={{ textDecoration: "none", color: "#303044" }}
+        >
+          Интерфейс
+        </Link>
         <Link
           to={"/me/bookmarks"}
-          style={{textDecoration: "none", color: "#303044"}}
-        >Закладки</Link>
+          style={{ textDecoration: "none", color: "#303044" }}
+        >
+          Закладки
+        </Link>
         <Link
           to={"/me/notes"}
-          style={{textDecoration: "none", color: "#303044"}}
-        >Заметки</Link>
+          style={{ textDecoration: "none", color: "#303044" }}
+        >
+          Заметки
+        </Link>
       </Stack>
-      
-      <Container 
+
+      <Container
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -54,10 +78,11 @@ export default function MyaccountLayout() {
           flex: 1,
           backgroundColor: "#FFFFFF",
           borderRadius: "4px",
-          boxShadow: "0px 0px 7px #638EFF"
-        }}>
-        <Outlet/>
+          boxShadow: "0px 0px 7px #638EFF",
+        }}
+      >
+        <Outlet context={useMemo(() => ({ user }), [user])} />
       </Container>
     </Container>
-  )
+  );
 }

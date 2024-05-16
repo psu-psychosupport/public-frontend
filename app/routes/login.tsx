@@ -4,12 +4,13 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { Box, Typography, Button, Stack, InputBase } from "@mui/material";
-import { Form, json, redirect, useActionData } from "@remix-run/react";
-import { Link } from "@remix-run/react";
+import { Form, json, redirect, useActionData, Link } from "@remix-run/react";
 import * as yup from "yup";
 import getUser from "~/utils/getUser";
 import { useFormik } from "formik";
 import { httpClient } from "~/api/http";
+import { sessionStorage } from "~/sessions";
+import StyledInput from "~/components/StyledInput";
 
 export const meta: MetaFunction = () => {
   return [
@@ -33,7 +34,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   const session = await sessionStorage.getSession(
-    request.headers.get("cookie")
+    request.headers.get("cookie"),
   );
 
   const res = await httpClient.signIn(email, password);
@@ -42,7 +43,7 @@ export async function action({ request }: ActionFunctionArgs) {
   session.set("access_token", res.data!.access_token);
   session.set("refresh_token", res.data!.refresh_token);
 
-  return redirect("/categories/list", {
+  return redirect("/me", {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session),
     },
@@ -103,27 +104,18 @@ export default function Login() {
           gap: "16px",
         }}
       >
-        <InputBase
+        <StyledInput
           required
           fullWidth
           id="email"
           name="email"
           autoComplete="email"
-          autoFocus
           placeholder="Введите адрес электронной почты"
-          sx={{
-            flex: 1,
-            paddingY: 1,
-            paddingX: 2,
-            bgcolor: "#ffffff",
-            borderRadius: "4px",
-            color: "#496CC6",
-            boxShadow: "0px 0px 7px #638EFF",
-          }}
           value={formik.values.email}
           onChange={formik.handleChange}
         />
-        <InputBase
+
+        <StyledInput
           required
           fullWidth
           name="password"
@@ -131,15 +123,6 @@ export default function Login() {
           id="password"
           autoComplete="current-password"
           placeholder="Введите пароль"
-          sx={{
-            flex: 1,
-            paddingY: 1,
-            paddingX: 2,
-            bgcolor: "#ffffff",
-            borderRadius: "4px",
-            color: "#496CC6",
-            boxShadow: "0px 0px 7px #638EFF",
-          }}
           value={formik.values.password}
           onChange={formik.handleChange}
         />
