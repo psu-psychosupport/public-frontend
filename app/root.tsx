@@ -14,12 +14,13 @@ import "./styles/global.css";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import { Container } from "@mui/material";
+import { ToastContainer } from "react-toastify";
 
 export const links: LinksFunction = () => [...getMuiLinks()];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,11 +30,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <Header />
-        <Container maxWidth={"xl"} sx={{display: "flex", flexGrow: 1, justifyContent: "center"}}>
+        <Container
+          maxWidth={"xl"}
+          sx={{ display: "flex", flexGrow: 1, justifyContent: "center" }}
+        >
           {children}
         </Container>
         <Footer />
-        
+        <ToastContainer />
         <ScrollRestoration />
         <Scripts />
       </body>
