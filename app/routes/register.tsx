@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Box, Typography, Button, InputBase } from "@mui/material";
+import { Container, Typography, Button, InputBase } from "@mui/material";
 import { Form, Link } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
@@ -11,7 +11,8 @@ export const meta: MetaFunction = () => {
 
 export default function Register() {
   return (
-    <Box
+    <Container
+      maxWidth={"sm"}
       sx={{
         marginTop: 8,
         display: 'flex',
@@ -120,6 +121,6 @@ export default function Register() {
       >
         Уже зарегистрированы? Войдите
       </Link>
-    </Box>
+    </Container>
   );
 }

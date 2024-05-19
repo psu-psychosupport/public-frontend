@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Box, Typography, Button, Stack, InputBase } from "@mui/material";
+import { Box, Typography, Button, Stack, InputBase, Container } from "@mui/material";
 import { Form } from "@remix-run/react";
 import { Link } from "@remix-run/react";
 
@@ -12,7 +12,8 @@ export const meta: MetaFunction = () => {
 
 export default function PasswordRecovery() {
   return (
-    <Box
+    <Container
+      maxWidth={"sm"}
       sx={{
         marginTop: 8,
         display: 'flex',
@@ -72,6 +73,6 @@ export default function PasswordRecovery() {
           Отправить письмо
         </Button>
       </Form>
-    </Box>
+    </Container>
   );
 }
