@@ -38,8 +38,14 @@ export default class HttpClient {
     {
       data,
       file,
+      params,
       asFormData,
-    }: { data?: object; file?: File; asFormData?: boolean } = {},
+    }: {
+      data?: object;
+      file?: File;
+      asFormData?: boolean;
+      params?: object;
+    } = {},
   ): Promise<IApiResponse<T>> {
     let payload = undefined;
 
@@ -66,6 +72,7 @@ export default class HttpClient {
       method,
       url: endpoint,
       data: payload,
+      params,
       headers: {
         "Content-Type":
           payload instanceof FormData
@@ -143,21 +150,42 @@ export default class HttpClient {
     return res;
   }
 
+  signUp(username: string, email: string, password: string) {
+    const formData = new FormData();
+    formData.append("name", username);
+    formData.append("email", email);
+    formData.append("password", password);
+
+    return this.request<null>("POST", "/signup", { data: formData });
+  }
+
   getMe() {
     return this.request<IUser>("GET", "/users/me");
   }
 
-  requestChangeUserEmail() {
-    return this.request<string>("PATCH", `/request-change-email`, );
+  changeUserName(name: string) {
+    return this.request<null>("PATCH", "/users/me/name", { params: { name } });
   }
 
-  changeUserEmail(email: string, token: string) {
-    return this.request<null>("PATCH", `/change-email`, { data: { email } });
+  requestChangeUserEmail(email: string) {
+    return this.request<null>("POST", `/request-email-change`, {
+      data: { email },
+    });
   }
 
-  recoveryPassword(userId: number, token: string, password: string) {
-    return this.request<null>("PATCH", `/change-password`, {
-      data: { password },
+  requestChangeUserPassword(email?: string) {
+    return this.request<null>("POST", `/request-password-change`, {
+      data: { email },
+    });
+  }
+
+  changeUserEmail(token: string) {
+    return this.request<null>("POST", `/change-email`, { data: { token } });
+  }
+
+  changePassword(token: string, password: string) {
+    return this.request<null>("POST", `/change-password`, {
+      data: { password, token },
     });
   }
 
