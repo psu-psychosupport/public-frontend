@@ -22,6 +22,8 @@ export default function UserPersonalSection() {
       name: user.name,
     },
     onSubmit: async ({ name }: { name: string }) => {
+      if (name === user.name) return;
+
       const res = await fetcher.submit(
         {
           id: user.id,
@@ -32,6 +34,8 @@ export default function UserPersonalSection() {
 
       if (res!.error) {
         toast.error(res!.error.message);
+      } else {
+        toast.success("Новое имя пользователя сохранено!");
       }
     },
     validationSchema,
@@ -63,20 +67,22 @@ export default function UserPersonalSection() {
               onChange={formik.handleChange}
             />
           </Stack>
-          <Box sx={{ marginTop: "auto", alignSelf: "center" }}>
-            <Button
-              type={"submit"}
-              sx={{
-                fontSize: 14,
-                borderRadius: "4px",
-                boxShadow: "0px 0px 7px #638EFF",
-                width: "fit-content",
-                padding: "12px 16px 12px 16px",
-              }}
-            >
-              Сохранить
-            </Button>
-          </Box>
+          {formik.values.name !== user.name && (
+            <Box sx={{ marginTop: "auto", alignSelf: "center" }}>
+              <Button
+                type={"submit"}
+                sx={{
+                  fontSize: 14,
+                  borderRadius: "4px",
+                  boxShadow: "0px 0px 7px #638EFF",
+                  width: "fit-content",
+                  padding: "12px 16px 12px 16px",
+                }}
+              >
+                Сохранить
+              </Button>
+            </Box>
+          )}
         </Stack>
       </Form>
     </React.Fragment>

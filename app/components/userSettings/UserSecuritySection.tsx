@@ -94,20 +94,22 @@ export default function UserSecuritySection() {
               onChange={formik.handleChange}
             />
           </Stack>
-          <Box sx={{ marginTop: "auto", alignSelf: "center" }}>
-            <Button
-              type={"submit"}
-              sx={{
-                fontSize: 14,
-                borderRadius: "4px",
-                boxShadow: "0px 0px 7px #638EFF",
-                width: "fit-content",
-                padding: "12px 16px 12px 16px",
-              }}
-            >
-              Изменить
-            </Button>
-          </Box>
+          {formik.values.email !== user.email && (
+            <Box sx={{ marginTop: "auto", alignSelf: "center" }}>
+              <Button
+                type={"submit"}
+                sx={{
+                  fontSize: 14,
+                  borderRadius: "4px",
+                  boxShadow: "0px 0px 7px #638EFF",
+                  width: "fit-content",
+                  padding: "12px 16px 12px 16px",
+                }}
+              >
+                Изменить
+              </Button>
+            </Box>
+          )}
         </Stack>
       </Form>
 
@@ -134,7 +136,7 @@ export default function UserSecuritySection() {
           boxShadow: "0px 0px 7px #EF5350",
           width: "fit-content",
           padding: "12px 16px 12px 16px",
-          color: "#EF5350"
+          color: "#EF5350",
         }}
       >
         Выйти из учётной записи
