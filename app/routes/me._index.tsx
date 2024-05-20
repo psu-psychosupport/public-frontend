@@ -1,27 +1,51 @@
-import React from "react";
-import { Typography, Box, Button } from "@mui/material";
+import { httpClient } from "~/api/http";
+import { ActionFunctionArgs, json } from "@remix-run/node";
+import { Stack } from "@mui/material";
+import UserPersonalSection from "~/components/userSettings/UserPersonalSection";
+import UserSecuritySection from "~/components/userSettings/UserSecuritySection";
+import {sessionStorage} from "~/sessions";
+import {redirect} from "@remix-run/react";
 
-export default function MyaccountUser() {
+export interface UserActionPayload {
+  name?: string;
+  goal?: "change-email" | "change-password" | "logout";
+  email?: string;
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const { name, goal, email }: UserActionPayload = await request.json();
+
+  if (name) {
+    const res = await httpClient.changeUserName(name);
+    return json(res);
+  }
+
+  if (goal === "change-email") {
+    const res = await httpClient.requestChangeUserEmail(email!);
+    return json(res);
+  } else if (goal === "change-password") {
+    const res = await httpClient.requestChangeUserPassword();
+    return json(res);
+  }
+  else if (goal === "logout") {
+    const session = await sessionStorage.getSession(
+      request.headers.get("cookie"),
+    );
+    return redirect("/", {
+      headers: {
+        "Set-Cookie": await sessionStorage.destroySession(session),
+      },
+    });
+  }
+
+  return null;
+}
+
+export default function MyAccountUser() {
   return (
-    <React.Fragment>
-      <Typography fontSize={30} color={"#496CC6"} mb={2}>Личная информация</Typography>
-
-      <Box sx={{display: "flex", flexDirection: "column", gap: 2}}>
-        <Typography fontSize={18}>ФИО: Иванов Иван Иванович</Typography>
-        <Typography fontSize={18}>Электронная почта: IvanovII@smth.com</Typography>
-        <Typography fontSize={18}>Пароль: ***************</Typography>
-      </Box>
-
-      <Button 
-        sx={{
-        fontSize: 18,
-        borderRadius: "4px",
-        boxShadow: "0px 0px 7px #638EFF",
-        width: "fit-content",
-        alignSelf: "center",
-        marginTop: "auto",
-        padding: "12px 16px 12px 16px",
-        }}>Изменить данные</Button>
-    </React.Fragment>
-  )
+    <Stack>
+      <UserPersonalSection />
+      <UserSecuritySection />
+    </Stack>
+  );
 }

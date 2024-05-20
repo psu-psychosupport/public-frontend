@@ -3,21 +3,20 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { Container, Typography, Button } from "@mui/material";
-import { Form, Link } from "@remix-run/react";
+import { Box, Typography, Button } from "@mui/material";
+import { Form, useLoaderData } from "@remix-run/react";
 import { redirect } from "react-router";
-import getUserLoader from "~/utils/getUser";
 import { useFormik } from "formik";
 import StyledInput from "~/components/StyledInput";
 import * as yup from "yup";
 import { httpClient, IApiError } from "~/api/http";
 import useAsyncFetcher from "~/hooks/useAsyncFetcher";
 import { toast } from "react-toastify";
+import { ErrorResponseCodes } from "~/api/types/enums";
 
-interface IUserRegisterForm {
-  username: string;
-  email: string;
+interface IChangePasswordPayload {
   password: string;
+  token: string;
 }
 
 export const meta: MetaFunction = () => {
@@ -28,27 +27,27 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return await getUserLoader(request);
+  const url = new URL(request.url);
+  const token = url.searchParams.get("token");
+  if (!token) {
+    throw redirect("/");
+  }
+  return token;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { username, email, password }: IUserRegisterForm = await request.json();
+  const { password, token }: IChangePasswordPayload = await request.json();
 
-  const res = await httpClient.signUp(username, email, password);
+  const res = await httpClient.changePassword(token, password);
 
   if (res.error) {
     return res.error;
   }
 
-  return redirect(`/acc-confirm?email=${email}`);
+  return redirect(`/login`);
 }
 
 const validationSchema = yup.object({
-  username: yup.string().required("Имя пользователя обязательно к заполнению"),
-  email: yup
-    .string()
-    .email("Введите корректную почту")
-    .required("Почта обязательна к заполнению"),
   password: yup
     .string()
     .min(8, "Длина пароля должна быть как минимум из 8 символов")
@@ -56,30 +55,32 @@ const validationSchema = yup.object({
 });
 
 export default function RegisterRoute() {
+  const token = useLoaderData<typeof loader>();
   const fetcher = useAsyncFetcher<IApiError>();
 
-  const formik = useFormik<IUserRegisterForm>({
+  const formik = useFormik<Omit<IChangePasswordPayload, "token">>({
     initialValues: {
-      username: "",
-      email: "",
       password: "",
     },
     validationSchema,
-    onSubmit: async ({ username, email, password }) => {
+    onSubmit: async ({ password }) => {
       const error = await fetcher.submit(
-        { username, email, password },
+        { password, token },
         { method: "POST", encType: "application/json" },
       );
 
-      if (error) {
+      if (!error) return toast.success("Пароль успешно сменён!");
+
+      if (error.code === ErrorResponseCodes.TOKEN_EXPIRED) {
+        toast.error("Ссылка устарела. Сбросьте пароль ещё раз");
+      } else {
         toast.error(error.message);
       }
     },
   });
 
   return (
-    <Container
-      maxWidth={"sm"}
+    <Box
       sx={{
         marginTop: 8,
         display: "flex",
@@ -93,14 +94,11 @@ export default function RegisterRoute() {
       }}
     >
       <Typography component="h5" variant="h5" color={"#496CC6"} fontSize={30}>
-        Регистрация
+        Смена пароля
       </Typography>
 
       <Typography color={"#FF7272"} fontSize={18}>
-        {(formik.touched.username && formik.errors.username) ||
-          (formik.touched.email && formik.errors.email) || (
-            formik.touched.password && formik.errors.password
-          )}
+        {formik.touched.password && formik.errors.password}
       </Typography>
 
       <Form
@@ -112,22 +110,6 @@ export default function RegisterRoute() {
           gap: "16px",
         }}
       >
-        <StyledInput
-          fullWidth
-          id="username"
-          name="username"
-          placeholder="Имя пользователя"
-          value={formik.values.username}
-          onChange={formik.handleChange}
-        />
-        <StyledInput
-          fullWidth
-          id="email"
-          name="email"
-          placeholder="Электронная почта"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-        />
         <StyledInput
           fullWidth
           name="password"
@@ -154,21 +136,9 @@ export default function RegisterRoute() {
             boxShadow: "0px 0px 7px #638EFF",
           }}
         >
-          Зарегистрироваться
+          Сменить пароль
         </Button>
       </Form>
-
-      <Link
-        to={"/login"}
-        style={{
-          textDecoration: "none",
-          fontSize: 18,
-          color: "#496CC6",
-          alignSelf: "center",
-        }}
-      >
-        Уже зарегистрированы? Войдите
-      </Link>
-    </Container>
+    </Box>
   );
 }

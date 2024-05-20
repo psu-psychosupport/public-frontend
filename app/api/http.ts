@@ -5,7 +5,7 @@ import { ICategory, IPost } from "~/api/types/content";
 import { IUser } from "~/api/types/users";
 import { IUserForm } from "~/api/types/payloads";
 
-export const API_URL = "http://localhost:8000" //"https://stoboi.damego.ru/api";
+export const API_URL = "http://localhost:8000"; //"https://stoboi.damego.ru/api";
 
 export interface IApiError {
   code: ErrorResponseCodes;
@@ -38,8 +38,16 @@ export default class HttpClient {
     {
       data,
       file,
+      params,
       asFormData,
-    }: { data?: object; file?: File; asFormData?: boolean } = {},
+      sendCredentials = true,
+    }: {
+      data?: object;
+      file?: File;
+      asFormData?: boolean;
+      params?: object;
+      sendCredentials?: boolean;
+    } = {},
   ): Promise<IApiResponse<T>> {
     let payload = undefined;
 
@@ -58,14 +66,18 @@ export default class HttpClient {
       payload = data;
     }
     console.log(`[HTTP] [${method}] '${endpoint}' data: ${payload}`);
-    let cookies = "";
-    if (this.accessToken) cookies += `access_token=${this.accessToken}; `;
-    if (this.refreshToken) cookies += `refresh_token=${this.refreshToken}; `;
+    let cookies = undefined;
+    if (sendCredentials) {
+      cookies = "";
+      if (this.accessToken) cookies += `access_token=${this.accessToken}; `;
+      if (this.refreshToken) cookies += `refresh_token=${this.refreshToken}; `;
+    }
 
     const response = await this.client.request({
       method,
       url: endpoint,
       data: payload,
+      params,
       headers: {
         "Content-Type":
           payload instanceof FormData
@@ -75,8 +87,11 @@ export default class HttpClient {
       },
     });
 
+    console.log(
+      `[HTTP] [${response.status}] [${method}] '${endpoint}' data: ${JSON.stringify(response.data)}`,
+    );
+
     if (response.status >= 400) {
-      console.log(response.status, response.data);
       if (response.data.detail.code === ErrorResponseCodes.TOKEN_EXPIRED) {
         await this.refreshAccessToken();
         await this.request(method, endpoint, { data, file, asFormData });
@@ -105,6 +120,13 @@ export default class HttpClient {
   }) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
+  }
+
+  getTokens() {
+    return {
+      accessToken: this.accessToken,
+      refreshToken: this.refreshToken,
+    };
   }
 
   async refreshAccessToken() {
@@ -136,11 +158,44 @@ export default class HttpClient {
     return res;
   }
 
+  signUp(username: string, email: string, password: string) {
+    const formData = new FormData();
+    formData.append("name", username);
+    formData.append("email", email);
+    formData.append("password", password);
+
+    return this.request<null>("POST", "/signup", { data: formData });
+  }
+
   getMe() {
     return this.request<IUser>("GET", "/users/me");
   }
-  updateUser(userId: number, user: IUserForm) {
-    return this.request<IUser>("PATCH", `/users/${userId}`, { data: user });
+
+  changeUserName(name: string) {
+    return this.request<null>("PATCH", "/users/me/name", { params: { name } });
+  }
+
+  requestChangeUserEmail(email: string) {
+    return this.request<null>("POST", `/request-email-change`, {
+      data: { email },
+      sendCredentials: !email,
+    });
+  }
+
+  requestChangeUserPassword(email?: string) {
+    return this.request<null>("POST", `/request-password-change`, {
+      data: email ? { email } : undefined,
+    });
+  }
+
+  changeUserEmail(token: string) {
+    return this.request<null>("POST", `/change-email`, { data: { token } });
+  }
+
+  changePassword(token: string, password: string) {
+    return this.request<null>("POST", `/change-password`, {
+      data: { password, token },
+    });
   }
 
   getCategories() {

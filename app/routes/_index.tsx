@@ -1,4 +1,4 @@
-import { json, MetaFunction } from "@remix-run/node";
+import {json, LoaderFunctionArgs, MetaFunction} from "@remix-run/node";
 import { Container } from "@mui/material";
 import Search from "~/components/search";
 import PopularQuestions from "~/components/popularQuestions";
@@ -13,7 +13,10 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader() {
+
+
+export async function loader({request}: LoaderFunctionArgs) {
+
   const [popularPostsRes, categoriesRes] = await Promise.all([
     httpClient.getPopularPosts(),
     httpClient.getCategories(),
