@@ -3,14 +3,15 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { Box, Typography, Button, Stack, InputBase } from "@mui/material";
-import { Form, json, redirect, useActionData, Link } from "@remix-run/react";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import { Form, json, Link, redirect, useActionData } from "@remix-run/react";
 import * as yup from "yup";
 import getUser from "~/utils/getUser";
 import { useFormik } from "formik";
 import { httpClient } from "~/api/http";
 import { sessionStorage } from "~/sessions";
 import StyledInput from "~/components/StyledInput";
+import { ErrorResponseCodes } from "~/api/types/enums";
 
 export const meta: MetaFunction = () => {
   return [
@@ -38,7 +39,12 @@ export async function action({ request }: ActionFunctionArgs) {
   );
 
   const res = await httpClient.signIn(email, password);
-  if (res.error) return json(res.error);
+  if (res.error) {
+    if (res.error.code === ErrorResponseCodes.USER_NOT_VERIFIED) {
+      await httpClient.requestChangeUserEmail(email);
+      throw redirect(`/acc-confirm?email=${email}`);
+    }
+  }
 
   session.set("access_token", res.data!.access_token);
   session.set("refresh_token", res.data!.refresh_token);

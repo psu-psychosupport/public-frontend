@@ -1,5 +1,5 @@
-import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Box, Typography, Button, InputBase } from "@mui/material";
+import { ActionFunctionArgs, json, MetaFunction } from "@remix-run/node";
+import { Box, Typography, Button } from "@mui/material";
 import { Form } from "@remix-run/react";
 import useAsyncFetcher from "~/hooks/useAsyncFetcher";
 import { httpClient, IApiError } from "~/api/http";
@@ -10,6 +10,7 @@ import NotifyDialog, {
   NotifyDialogMethods,
 } from "~/components/modals/NotifyDialog";
 import React, { useRef } from "react";
+import StyledInput from "~/components/StyledInput";
 
 export interface IRequestPasswordChangePayload {
   email: string;
@@ -26,24 +27,14 @@ export async function action({ request }: ActionFunctionArgs) {
   const { email }: IRequestPasswordChangePayload = await request.json();
 
   const res = await httpClient.requestChangeUserPassword(email);
-
-  if (res.error) {
-    return res.error;
-  }
-
-  return null;
+  return json(res);
 }
 
 const validationSchema = yup.object({
-  username: yup.string().required("Имя пользователя обязательно к заполнению"),
   email: yup
     .string()
     .email("Введите корректную почту")
     .required("Почта обязательна к заполнению"),
-  password: yup
-    .string()
-    .min(8, "Длина пароля должна быть как минимум из 8 символов")
-    .required("Пароль обязателен к заполнению"),
 });
 
 export default function PasswordRecovery() {
@@ -55,13 +46,13 @@ export default function PasswordRecovery() {
     },
     validationSchema,
     onSubmit: async ({ email }) => {
-      const error = await fetcher.submit(
+      const res = await fetcher.submit(
         { email },
         { method: "POST", encType: "application/json" },
       );
 
-      if (error) {
-        toast.error(error.message);
+      if (res.error) {
+        toast.error(res.error.message);
       } else {
         dialogRef.current?.open();
       }
@@ -93,6 +84,12 @@ export default function PasswordRecovery() {
         Восстановление пароля
       </Typography>
 
+      {formik.touched.email && formik.errors.email && (
+        <Typography color={"#FF7272"} fontSize={18}>
+          {formik.errors.email}
+        </Typography>
+      )}
+
       <Form
         method="POST"
         onSubmit={formik.handleSubmit}
@@ -103,21 +100,14 @@ export default function PasswordRecovery() {
           paddingBottom: 15,
         }}
       >
-        <InputBase
+        <StyledInput
           required
           fullWidth
           id="email"
           name="email"
           placeholder="Адрес электронной почты"
-          sx={{
-            flex: 1,
-            paddingY: 1,
-            paddingX: 2,
-            bgcolor: "#ffffff",
-            borderRadius: "4px",
-            color: "#496CC6",
-            boxShadow: "0px 0px 7px #638EFF",
-          }}
+          value={formik.values.email}
+          onChange={formik.handleChange}
         />
         <Button
           type="submit"
@@ -137,10 +127,7 @@ export default function PasswordRecovery() {
           Отправить письмо
         </Button>
       </Form>
-      <NotifyDialog
-        ref={dialogRef}
-        title={"Сброс пароля"}
-      >
+      <NotifyDialog ref={dialogRef} title={"Сброс пароля"}>
         На указанную вами почту было отправлено письмо с ссылкой. Перейдите по
         ней для смены пароля
       </NotifyDialog>

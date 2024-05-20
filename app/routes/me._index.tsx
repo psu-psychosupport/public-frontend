@@ -3,10 +3,12 @@ import { ActionFunctionArgs, json } from "@remix-run/node";
 import { Stack } from "@mui/material";
 import UserPersonalSection from "~/components/userSettings/UserPersonalSection";
 import UserSecuritySection from "~/components/userSettings/UserSecuritySection";
+import {sessionStorage} from "~/sessions";
+import {redirect} from "@remix-run/react";
 
 export interface UserActionPayload {
   name?: string;
-  goal?: "change-email" | "change-password";
+  goal?: "change-email" | "change-password" | "logout";
   email?: string;
 }
 
@@ -24,6 +26,16 @@ export async function action({ request }: ActionFunctionArgs) {
   } else if (goal === "change-password") {
     const res = await httpClient.requestChangeUserPassword();
     return json(res);
+  }
+  else if (goal === "logout") {
+    const session = await sessionStorage.getSession(
+      request.headers.get("cookie"),
+    );
+    return redirect("/", {
+      headers: {
+        "Set-Cookie": await sessionStorage.destroySession(session),
+      },
+    });
   }
 
   return null;

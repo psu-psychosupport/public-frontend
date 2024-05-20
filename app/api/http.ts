@@ -40,11 +40,13 @@ export default class HttpClient {
       file,
       params,
       asFormData,
+      sendCredentials = true,
     }: {
       data?: object;
       file?: File;
       asFormData?: boolean;
       params?: object;
+      sendCredentials?: boolean;
     } = {},
   ): Promise<IApiResponse<T>> {
     let payload = undefined;
@@ -64,9 +66,12 @@ export default class HttpClient {
       payload = data;
     }
     console.log(`[HTTP] [${method}] '${endpoint}' data: ${payload}`);
-    let cookies = "";
-    if (this.accessToken) cookies += `access_token=${this.accessToken}; `;
-    if (this.refreshToken) cookies += `refresh_token=${this.refreshToken}; `;
+    let cookies = undefined;
+    if (sendCredentials) {
+      cookies = "";
+      if (this.accessToken) cookies += `access_token=${this.accessToken}; `;
+      if (this.refreshToken) cookies += `refresh_token=${this.refreshToken}; `;
+    }
 
     const response = await this.client.request({
       method,
@@ -82,8 +87,11 @@ export default class HttpClient {
       },
     });
 
+    console.log(
+      `[HTTP] [${response.status}] [${method}] '${endpoint}' data: ${JSON.stringify(response.data)}`,
+    );
+
     if (response.status >= 400) {
-      console.log(response.status, response.data);
       if (response.data.detail.code === ErrorResponseCodes.TOKEN_EXPIRED) {
         await this.refreshAccessToken();
         await this.request(method, endpoint, { data, file, asFormData });
@@ -170,12 +178,13 @@ export default class HttpClient {
   requestChangeUserEmail(email: string) {
     return this.request<null>("POST", `/request-email-change`, {
       data: { email },
+      sendCredentials: !email,
     });
   }
 
   requestChangeUserPassword(email?: string) {
     return this.request<null>("POST", `/request-password-change`, {
-      data: { email },
+      data: email ? { email } : undefined,
     });
   }
 

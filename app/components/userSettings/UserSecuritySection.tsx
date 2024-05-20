@@ -1,6 +1,6 @@
 import useAsyncFetcher from "~/hooks/useAsyncFetcher";
 import { IApiResponse } from "~/api/http";
-import { Form, useOutletContext } from "@remix-run/react";
+import { Form, redirect, useOutletContext } from "@remix-run/react";
 import { IUser } from "~/api/types/users";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
@@ -11,6 +11,7 @@ import * as yup from "yup";
 import NotifyDialog, {
   NotifyDialogMethods,
 } from "~/components/modals/NotifyDialog";
+import { sessionStorage } from "~/sessions";
 
 const validationSchema = yup.object({
   email: yup.string().required("Имя пользователя обязательно к заполнению"),
@@ -19,7 +20,8 @@ const validationSchema = yup.object({
 export default function UserSecuritySection() {
   const fetcher = useAsyncFetcher<IApiResponse<any>>();
   const { user } = useOutletContext<{ user: IUser }>();
-  const modalRef = useRef<NotifyDialogMethods>();
+  const emailDialogRef = useRef<NotifyDialogMethods>();
+  const passwordDialogRef = useRef<NotifyDialogMethods>();
 
   const formik = useFormik<{ email: string }>({
     initialValues: {
@@ -43,14 +45,32 @@ export default function UserSecuritySection() {
         toast.error(res.error.message);
         return;
       }
-      modalRef.current?.open();
+      emailDialogRef.current?.open();
     },
     validationSchema,
   });
 
+  const resetPassword = async () => {
+    const res = await fetcher.submit(
+      { goal: "change-password" },
+      { method: "POST", encType: "application/json" },
+    );
+    if (res?.error) {
+      toast.error(res?.error.message);
+    } else {
+      passwordDialogRef.current?.open();
+    }
+  };
+
+  const logOut = () =>
+    fetcher.submit(
+      { goal: "logout" },
+      { method: "POST", encType: "application/json" },
+    );
+
   return (
     <React.Fragment>
-      <Typography fontSize={30} color={"#496CC6"} mb={2}>
+      <Typography fontSize={30} color={"#496CC6"} mb={2} mt={2}>
         Безопасность
       </Typography>
       <Form
@@ -90,7 +110,44 @@ export default function UserSecuritySection() {
           </Box>
         </Stack>
       </Form>
-      <NotifyDialog ref={modalRef} title={"Изменение адреса электронной почты"}>
+
+      <Button
+        onClick={resetPassword}
+        sx={{
+          mt: 2,
+          fontSize: 14,
+          borderRadius: "4px",
+          boxShadow: "0px 0px 7px #638EFF",
+          width: "fit-content",
+          padding: "12px 16px 12px 16px",
+        }}
+      >
+        Сбросить пароль
+      </Button>
+
+      <Button
+        onClick={logOut}
+        sx={{
+          mt: 2,
+          fontSize: 14,
+          borderRadius: "4px",
+          boxShadow: "0px 0px 7px #EF5350",
+          width: "fit-content",
+          padding: "12px 16px 12px 16px",
+          color: "#EF5350"
+        }}
+      >
+        Выйти из учётной записи
+      </Button>
+
+      <NotifyDialog ref={passwordDialogRef} title={"Сброс пароля"}>
+        На ваш адрес электронной почты была отправлена ссылка для сброса пароля.
+        Перейдите по ней.
+      </NotifyDialog>
+      <NotifyDialog
+        ref={emailDialogRef}
+        title={"Изменение адреса электронной почты"}
+      >
         На указанную вами почту было отправлено письмо с ссылкой. Перейдите по
         ней для подтверждения изменения адреса электронной почты
       </NotifyDialog>

@@ -4,18 +4,19 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { Box, Typography, Button } from "@mui/material";
-import { Form, Link } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { redirect } from "react-router";
-import getUserLoader from "~/utils/getUser";
 import { useFormik } from "formik";
 import StyledInput from "~/components/StyledInput";
 import * as yup from "yup";
 import { httpClient, IApiError } from "~/api/http";
 import useAsyncFetcher from "~/hooks/useAsyncFetcher";
 import { toast } from "react-toastify";
+import { ErrorResponseCodes } from "~/api/types/enums";
 
 interface IChangePasswordPayload {
   password: string;
+  token: string;
 }
 
 export const meta: MetaFunction = () => {
@@ -31,13 +32,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (!token) {
     throw redirect("/");
   }
+  return token;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const url = new URL(request.url);
-  const token = url.searchParams.get("token")!;
-
-  const { password }: IChangePasswordPayload = await request.json();
+  const { password, token }: IChangePasswordPayload = await request.json();
 
   const res = await httpClient.changePassword(token, password);
 
@@ -56,20 +55,25 @@ const validationSchema = yup.object({
 });
 
 export default function RegisterRoute() {
+  const token = useLoaderData<typeof loader>();
   const fetcher = useAsyncFetcher<IApiError>();
 
-  const formik = useFormik<IChangePasswordPayload>({
+  const formik = useFormik<Omit<IChangePasswordPayload, "token">>({
     initialValues: {
       password: "",
     },
     validationSchema,
     onSubmit: async ({ password }) => {
       const error = await fetcher.submit(
-        { password },
+        { password, token },
         { method: "POST", encType: "application/json" },
       );
 
-      if (error) {
+      if (!error) return toast.success("Пароль успешно сменён!");
+
+      if (error.code === ErrorResponseCodes.TOKEN_EXPIRED) {
+        toast.error("Ссылка устарела. Сбросьте пароль ещё раз");
+      } else {
         toast.error(error.message);
       }
     },

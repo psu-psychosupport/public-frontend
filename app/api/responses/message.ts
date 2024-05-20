@@ -5,6 +5,7 @@ export const errorMessages = {
   [ErrorResponseCodes.INVALID_TOKEN]: "Невалидный токен аутентификации",
   [ErrorResponseCodes.INVALID_TOKEN_TYPE]:
     "Некорректный тип токена аутентификации",
+  [ErrorResponseCodes.TOKEN_EXPIRED]: "Срок действия токена истёк",
 
   [ErrorResponseCodes.INVALID_USER_CREDENTIALS]:
     "Неверно указана почта или пароль",
