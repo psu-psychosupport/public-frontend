@@ -3,7 +3,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Container, Button, Stack, Typography } from "@mui/material";
 import { Form, json, Link, redirect, useActionData } from "@remix-run/react";
 import * as yup from "yup";
 import getUser from "~/utils/getUser";
@@ -79,7 +79,8 @@ export default function Login() {
   });
 
   return (
-    <Box
+    <Container
+      maxWidth={"sm"}
       sx={{
         marginTop: 8,
         display: "flex",
@@ -173,6 +174,6 @@ export default function Login() {
           Впервые? Зарегистрируйтесь
         </Link>
       </Stack>
-    </Box>
+    </Container>
   );
 }

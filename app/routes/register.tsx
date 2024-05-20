@@ -3,7 +3,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { Box, Typography, Button } from "@mui/material";
+import { Container, Typography, Button } from "@mui/material";
 import { Form, Link } from "@remix-run/react";
 import { redirect } from "react-router";
 import getUserLoader from "~/utils/getUser";
@@ -78,7 +78,8 @@ export default function RegisterRoute() {
   });
 
   return (
-    <Box
+    <Container
+      maxWidth={"sm"}
       sx={{
         marginTop: 8,
         display: "flex",
@@ -168,6 +169,6 @@ export default function RegisterRoute() {
       >
         Уже зарегистрированы? Войдите
       </Link>
-    </Box>
+    </Container>
   );
 }

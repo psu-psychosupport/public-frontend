@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, json, MetaFunction } from "@remix-run/node";
-import { Box, Typography, Button } from "@mui/material";
+import { Typography, Button, Container } from "@mui/material";
 import { Form } from "@remix-run/react";
 import useAsyncFetcher from "~/hooks/useAsyncFetcher";
 import { httpClient, IApiError } from "~/api/http";
@@ -61,7 +61,8 @@ export default function PasswordRecovery() {
   const dialogRef = useRef<NotifyDialogMethods>();
 
   return (
-    <Box
+    <Container
+      maxWidth={"sm"}
       sx={{
         marginTop: 8,
         display: "flex",
@@ -131,6 +132,6 @@ export default function PasswordRecovery() {
         На указанную вами почту было отправлено письмо с ссылкой. Перейдите по
         ней для смены пароля
       </NotifyDialog>
-    </Box>
+    </Container>
   );
 }
