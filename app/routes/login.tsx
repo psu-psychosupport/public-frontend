@@ -8,10 +8,12 @@ import { Form, json, Link, redirect, useActionData } from "@remix-run/react";
 import * as yup from "yup";
 import getUser from "~/utils/getUser";
 import { useFormik } from "formik";
-import { httpClient } from "~/api/http";
+import { httpClient, IApiError } from "~/api/http";
 import { sessionStorage } from "~/sessions";
 import StyledInput from "~/components/StyledInput";
 import { ErrorResponseCodes } from "~/api/types/enums";
+import useAsyncFetcher from "~/hooks/useAsyncFetcher";
+import { toast } from "react-toastify";
 
 export const meta: MetaFunction = () => {
   return [
@@ -44,6 +46,7 @@ export async function action({ request }: ActionFunctionArgs) {
       await httpClient.requestChangeUserEmail(email);
       throw redirect(`/acc-confirm?email=${email}`);
     }
+    return json(res.error);
   }
 
   session.set("access_token", res.data!.access_token);
@@ -68,13 +71,26 @@ const validationSchema = yup.object({
 });
 
 export default function Login() {
-  const error = useActionData<typeof action>();
+  const fetcher = useAsyncFetcher<IApiError>();
+
   const formik = useFormik<{ email: string; password: string }>({
     initialValues: {
       email: "",
       password: "",
     },
-    onSubmit: () => {},
+    onSubmit: async ({ email, password }) => {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      const error = await fetcher.submit(formData, {
+        method: "POST",
+        encType: "multipart/form-data",
+      });
+
+      if (error) {
+        toast.error(error.message);
+      }
+    },
     validationSchema,
   });
 
@@ -97,14 +113,14 @@ export default function Login() {
         Вход
       </Typography>
 
-      {error && (
-        <Typography color={"#FF7272"} fontSize={18}>
-          {error.message}
-        </Typography>
-      )}
+      <Typography color={"#FF7272"} fontSize={18}>
+        {(formik.touched.email && formik.errors.email) ||
+          (formik.touched.password && formik.errors.password)}
+      </Typography>
 
       <Form
         method="POST"
+        onSubmit={formik.handleSubmit}
         style={{
           display: "flex",
           flexDirection: "column",
