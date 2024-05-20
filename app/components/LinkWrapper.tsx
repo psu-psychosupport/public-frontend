@@ -26,7 +26,7 @@ export const LinkWrapper = ({
   return (
     <Link
       style={{ textDecoration: "none", color: "inherit", width: "100%" }}
-      to={`/posts/${postId}`}
+      to={`/post/${postId}`}
     >
       {children}
     </Link>
