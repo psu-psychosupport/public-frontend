@@ -49,12 +49,12 @@ export default function MyAccountLayout() {
         <Link to={"/me"} style={{ textDecoration: "none", color: "#303044" }}>
           Личная информация
         </Link>
-        <Link
-          to={"/me/interface"}
-          style={{ textDecoration: "none", color: "#303044" }}
-        >
-          Интерфейс
-        </Link>
+        {/*<Link*/}
+        {/*  to={"/me/interface"}*/}
+        {/*  style={{ textDecoration: "none", color: "#303044" }}*/}
+        {/*>*/}
+        {/*  Интерфейс*/}
+        {/*</Link>*/}
         <Link
           to={"/me/bookmarks"}
           style={{ textDecoration: "none", color: "#303044" }}
