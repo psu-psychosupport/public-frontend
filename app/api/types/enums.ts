@@ -28,6 +28,8 @@ export enum ErrorResponseCodes {
   CATEGORY_NOT_FOUND = 10300,
   SUBCATEGORY_NOT_FOUND = 10301,
   POST_NOT_FOUND = 10302,
+  MISSING_ARGUMENTS = 10303,
+  NOT_YOUR_CONTENT = 10304,
 }
 
 export enum MediaTypes {
@@ -38,4 +40,9 @@ export enum MediaTypes {
   PDF = 5,
   TEST = 6,
   FILE = 7,
+}
+
+export enum UserContentTypes {
+  BOOKMARK = "BOOKMARK",
+  NOTE = "NOTE",
 }

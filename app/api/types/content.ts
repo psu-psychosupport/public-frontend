@@ -1,4 +1,4 @@
-import {MediaTypes} from "./enums";
+import { MediaTypes, UserContentTypes } from "./enums";
 
 export interface ICategory {
   id: number;
@@ -30,4 +30,14 @@ export interface IMedia<T> {
   file_name?: string;
   type: MediaTypes;
   data?: T;
+}
+
+export interface IUserContent {
+  id: number;
+  user_id: number;
+  post_id: number;
+  content_type: UserContentTypes;
+  content?: string;
+
+  post: IPost;
 }

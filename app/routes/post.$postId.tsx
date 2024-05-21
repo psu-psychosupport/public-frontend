@@ -1,30 +1,95 @@
-import { Container, Box, Stack, IconButton, Typography } from "@mui/material";
-import { Link, useLoaderData } from "@remix-run/react";
+import {
+  Box,
+  colors,
+  Container,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import ComponentSearch from "~/components/search";
 import IconHome from "~/assets/home";
 import IconBookmark from "~/assets/bookmark";
 import IconPencil from "~/assets/pencil";
 import { getRandomColor } from "~/utils/getRandomColor";
 import { httpClient } from "~/api/http";
-import { json, LoaderFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import getPostName from "~/utils/getPostName";
 import MarkdownViewer from "~/components/markdownEditor/MarkdownViewer";
 import { ClientOnly } from "remix-utils/client-only";
+import { UserContentTypes } from "~/api/types/enums";
+import useAsyncFetcher from "~/hooks/useAsyncFetcher";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   if (!params.postId || Number.isNaN(Number.parseInt(params.postId))) {
-    return null;
+    return {};
   }
-  const res = await httpClient.getPostById(Number.parseInt(params.postId));
-  return json(res.data);
+  const postResponse = await httpClient.getPostById(
+    Number.parseInt(params.postId),
+  );
+
+  if (postResponse.error) {
+    return json({ post: null });
+  }
+
+  const userContentResponse = await httpClient.getUserContentList({
+    postId: postResponse.data!.id,
+  });
+
+  if (userContentResponse.error || !userContentResponse.data?.length) {
+    return json({ post: postResponse.data });
+  }
+
+  return json({
+    post: postResponse.data,
+    note: userContentResponse.data.find(
+      (content) => content.content_type === UserContentTypes.NOTE,
+    ),
+    bookmark: userContentResponse.data.find(
+      (content) => content.content_type === UserContentTypes.BOOKMARK,
+    ),
+  });
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const { goal, postId, content } = await request.json();
+
+  if (goal === "add-bookmark") {
+    await httpClient.addUserContent({
+      post_id: postId,
+      content_type: UserContentTypes.BOOKMARK,
+    });
+  } else if (goal === "remove-bookmark") {
+    // todo
+  } else if (goal === "add-note") {
+    await httpClient.addUserContent({
+      post_id: postId,
+      content_type: UserContentTypes.NOTE,
+      content,
+    });
+  } else if (goal === "update-note") {
+    // todo
+  } else if (goal === "remove-note") {
+    // todo
+  }
+  return null;
 }
 
 export default function Post() {
-  const post = useLoaderData<typeof loader>();
+  const { post, note, bookmark } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
+  const fetcher = useAsyncFetcher();
 
   if (!post) {
     return <Typography variant={"h1"}>Пост не найден</Typography>;
   }
+
+  const onBookmarkButtonClick = async () => {
+    await fetcher.submit(
+      { goal: bookmark ? "delete-bookmark" : "add-bookmark", postId: post.id },
+      { method: "POST", encType: "application/json" },
+    );
+  };
 
   return (
     <Container
@@ -34,6 +99,7 @@ export default function Post() {
     >
       <Stack sx={{ alignItems: "center", mb: 2, gap: 1 }} direction={"row"}>
         <IconButton
+          onClick={() => navigate("/")}
           className="buttonIcon"
           children={<IconHome />}
           sx={{
@@ -46,7 +112,10 @@ export default function Post() {
         />
         <IconButton
           className="buttonIcon"
-          children={<IconBookmark />}
+          children={
+            <IconBookmark color={bookmark ? colors.yellow.A700 : undefined} />
+          }
+          onClick={onBookmarkButtonClick}
           sx={{
             bgcolor: "white",
             width: 48,
@@ -140,6 +209,7 @@ export default function Post() {
           </ClientOnly>
         </Container>
       </Box>
+      {/*<UserNoteDialog content={} />*/}
     </Container>
   );
 }
