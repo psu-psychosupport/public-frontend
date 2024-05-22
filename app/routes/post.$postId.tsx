@@ -21,6 +21,8 @@ import { UserContentTypes } from "~/api/types/enums";
 import useAsyncFetcher from "~/hooks/useAsyncFetcher";
 import UserNoteDialog, { UserNoteDialogMethods } from "~/components/modals/UserNoteDialog";
 import { useRef } from "react";
+import PostContentSearch from "~/components/PostContentSearch";
+import {MDXEditorMethods} from "@mdxeditor/editor";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   if (!params.postId || Number.isNaN(Number.parseInt(params.postId))) {
@@ -80,6 +82,7 @@ export default function Post() {
   const navigate = useNavigate();
   const fetcher = useAsyncFetcher();
   const noteDialogRef = useRef<UserNoteDialogMethods>();
+  const viewerRef = useRef<MDXEditorMethods>();
 
   if (!post) {
     return <Typography variant={"h1"}>Пост не найден</Typography>;
@@ -99,6 +102,10 @@ export default function Post() {
       {method: "POST", encType: "application/json"}
     );
     noteDialogRef.current.close();
+  }
+
+  const onSearch = (value: string) => {
+    
   }
 
   return (
@@ -146,7 +153,7 @@ export default function Post() {
             boxShadow: "0px 0px 7px #638EFF",
           }}
         />
-        <ComponentSearch />
+        <PostContentSearch onTextChange={onSearch} />
       </Stack>
 
       <Box sx={{ display: "flex", gap: 2, flexGrow: 1, pb: 3 }}>

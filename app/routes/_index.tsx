@@ -1,4 +1,9 @@
-import {json, LoaderFunctionArgs, MetaFunction} from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@remix-run/node";
 import { Container } from "@mui/material";
 import Search from "~/components/search";
 import PopularQuestions from "~/components/popularQuestions";
@@ -13,22 +18,33 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-
-
-export async function loader({request}: LoaderFunctionArgs) {
-
+export async function loader({ request }: LoaderFunctionArgs) {
   const [popularPostsRes, categoriesRes] = await Promise.all([
     httpClient.getPopularPosts(),
     httpClient.getCategories(),
   ]);
-  return json({ posts: popularPostsRes.data!, categories: categoriesRes.data! });
+  return json({
+    posts: popularPostsRes.data!,
+    categories: categoriesRes.data!,
+  });
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const { goal, query } = await request.json();
+
+  if (goal === "search") {
+    const res = await httpClient.searchPosts(query);
+    return json(res.data);
+  }
 }
 
 export default function Index() {
   const { posts, categories } = useLoaderData<typeof loader>();
 
   return (
-    <Container sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+    <Container
+      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
       <Search />
       <PopularQuestions posts={posts} />
       <AllSections categories={categories} />

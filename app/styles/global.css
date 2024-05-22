@@ -94,3 +94,7 @@ body {
   align-items: center;
   margin-bottom: 1%;
 }
+
+.highlight-text {
+  color: #638EFF;
+}

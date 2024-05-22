@@ -3,7 +3,11 @@ import axios, { AxiosInstance } from "axios";
 import { getErrorMessage } from "~/api/responses/message";
 import { ICategory, IPost, IUserContent } from "~/api/types/content";
 import { IUser } from "~/api/types/users";
-import { ICreateUserContent, IUserContentUpdate, IUserForm } from "~/api/types/payloads";
+import {
+  ICreateUserContent,
+  IUserContentUpdate,
+  IUserForm,
+} from "~/api/types/payloads";
 
 export const API_URL = "http://127.0.0.1:8000"; //"https://stoboi.damego.ru/api";
 
@@ -231,11 +235,17 @@ export default class HttpClient {
   }
 
   updateUserContent(contentId: number, contentUpdate: IUserContentUpdate) {
-    return this.request<null>("PATCH", `/me/content/${contentId}`, {data: contentUpdate})
+    return this.request<null>("PATCH", `/me/content/${contentId}`, {
+      data: contentUpdate,
+    });
   }
 
   deleteUserContent(contentId: number) {
     return this.request<null>("DELETE", `/me/content/${contentId}`);
+  }
+
+  searchPosts(query: string, postId?: number) {
+    return this.request<IPost>("GET", "/search", { params: { query, post_id: postId } });
   }
 }
 
