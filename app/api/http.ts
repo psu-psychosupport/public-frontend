@@ -1,11 +1,11 @@
-import { ErrorResponseCodes } from "~/api/types/enums";
+import { ErrorResponseCodes, UserContentTypes } from "~/api/types/enums";
 import axios, { AxiosInstance } from "axios";
 import { getErrorMessage } from "~/api/responses/message";
-import { ICategory, IPost } from "~/api/types/content";
+import { ICategory, IPost, IUserContent } from "~/api/types/content";
 import { IUser } from "~/api/types/users";
-import { IUserForm } from "~/api/types/payloads";
+import { ICreateUserContent, IUserContentUpdate, IUserForm } from "~/api/types/payloads";
 
-export const API_URL = "http://localhost:8000"; //"https://stoboi.damego.ru/api";
+export const API_URL = "http://127.0.0.1:8000"; //"https://stoboi.damego.ru/api";
 
 export interface IApiError {
   code: ErrorResponseCodes;
@@ -212,6 +212,30 @@ export default class HttpClient {
 
   getPopularPosts() {
     return this.request<IPost[]>("GET", `/popular`);
+  }
+
+  getUserContentList({
+    type,
+    postId,
+  }: {
+    type?: UserContentTypes;
+    postId?: number;
+  }) {
+    return this.request<IUserContent[]>("GET", "/me/content", {
+      params: { type, post_id: postId },
+    });
+  }
+
+  addUserContent(content: ICreateUserContent) {
+    return this.request<null>("POST", "/me/content", { data: content });
+  }
+
+  updateUserContent(contentId: number, contentUpdate: IUserContentUpdate) {
+    return this.request<null>("PATCH", `/me/content/${contentId}`, {data: contentUpdate})
+  }
+
+  deleteUserContent(contentId: number) {
+    return this.request<null>("DELETE", `/me/content/${contentId}`);
   }
 }
 
