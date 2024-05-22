@@ -114,48 +114,12 @@ export default function Post() {
       disableGutters
       sx={{ display: "flex", flexDirection: "column", mt: 1 }}
     >
-      <Stack sx={{ alignItems: "center", mb: 2, gap: 1 }} direction={"row"}>
-        <IconButton
-          onClick={() => navigate("/")}
-          className="buttonIcon"
-          children={<IconHome />}
-          sx={{
-            bgcolor: "white",
-            width: 48,
-            height: 48,
-            borderRadius: "4px",
-            boxShadow: "0px 0px 7px #638EFF",
-          }}
-        />
-        <IconButton
-          className="buttonIcon"
-          children={
-            <IconBookmark color={bookmark ? colors.yellow.A700 : undefined} />
-          }
-          onClick={onBookmarkButtonClick}
-          sx={{
-            bgcolor: "white",
-            width: 48,
-            height: 48,
-            borderRadius: "4px",
-            boxShadow: "0px 0px 7px #638EFF",
-          }}
-        />
-        <IconButton
-          className="buttonIcon"
-          children={<IconPencil />}
-          onClick={() => noteDialogRef.current?.open()}
-          sx={{
-            bgcolor: "white",
-            width: 48,
-            height: 48,
-            borderRadius: "4px",
-            boxShadow: "0px 0px 7px #638EFF",
-          }}
-        />
+      {/*
+      <Container disableGutters maxWidth={"md"} sx={{mb: 2}}>
         <PostContentSearch onTextChange={onSearch} />
-      </Stack>
-
+      </Container>
+      */}
+      
       <Box sx={{ display: "flex", gap: 2, flexGrow: 1, pb: 3 }}>
         <Stack
           spacing={1.5}
@@ -170,6 +134,47 @@ export default function Post() {
             flexBasis: "25%",
           }}
         >
+          <Stack sx={{ alignItems: "center", mb: 2, gap: 1 }} direction={"row"}>
+            <IconButton
+              onClick={() => navigate("/")}
+              className="buttonIcon"
+              children={<IconHome />}
+              sx={{
+                bgcolor: "white",
+                width: 48,
+                height: 48,
+                borderRadius: "4px",
+                boxShadow: "0px 0px 7px #638EFF",
+              }}
+            />
+            <IconButton
+              className="buttonIcon"
+              children={
+                <IconBookmark color={bookmark ? colors.yellow.A700 : undefined} />
+              }
+              onClick={onBookmarkButtonClick}
+              sx={{
+                bgcolor: "white",
+                width: 48,
+                height: 48,
+                borderRadius: "4px",
+                boxShadow: "0px 0px 7px #638EFF",
+              }}
+            />
+            <IconButton
+              className="buttonIcon"
+              children={<IconPencil />}
+              onClick={() => noteDialogRef.current?.open()}
+              sx={{
+                bgcolor: "white",
+                width: 48,
+                height: 48,
+                borderRadius: "4px",
+                boxShadow: "0px 0px 7px #638EFF",
+              }}
+            />
+          </Stack>
+
           <Typography sx={{ color: "#496CC6", fontSize: 18 }}>
             {post.category.name}
           </Typography>
