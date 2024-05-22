@@ -1,5 +1,5 @@
 body {
-  background: linear-gradient(#D0EEFF, #D7D2FF) fixed;
+  background: url("pattern.png"), linear-gradient(#D0EEFF, #D7D2FF) fixed;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
