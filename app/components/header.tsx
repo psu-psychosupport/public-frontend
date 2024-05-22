@@ -6,7 +6,7 @@ import UserIcon from "~/assets/user";
 
 export default function Header() {
   return (
-    <Box sx={{ mb: 2 }}>
+    <Box sx={{ mb: 2, zIndex: 2 }}>
       <AppBar position="static" sx={{ bgcolor: "#303044" }}>
         <Container
           sx={{
