@@ -20,6 +20,10 @@ export default function ComponentSearch() {
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) {
     const value = event.target.value;
+    if (!value) {
+      setData(null);
+      return;
+    }
     const posts: IPost[] = await fetcher.submit(
       { goal: "search", query: value },
       { method: "POST", encType: "application/json" },
@@ -110,6 +114,7 @@ export default function ComponentSearch() {
       />
       {data && (
         <Container
+          onClick={() => setData(null)}
           disableGutters
           maxWidth={false}
           sx={{
