@@ -33,6 +33,7 @@ export default function AllSections({
                         style={{
                           color: "#496CC6",
                           fontSize: 18,
+                          fontWeight: "500",
                           margin: "1% 2% 1% 2%",
                         }}
                       >

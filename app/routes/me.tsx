@@ -7,7 +7,7 @@ import { useMemo } from "react";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await sessionStorage.getSession(
-    request.headers.get("cookie"),
+    request.headers.get("cookie")
   );
   const accessToken = session.get("access_token");
   const refreshToken = session.get("refresh_token");
@@ -67,6 +67,14 @@ export default function MyAccountLayout() {
         >
           Заметки
         </Link>
+        {(user.permissions & 1) === 1 && (
+          <Link
+            to={"/admin"}
+            style={{ textDecoration: "none", color: "#303044" }}
+          >
+            Панель управления
+          </Link>
+        )}
       </Stack>
 
       <Container
