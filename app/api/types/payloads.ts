@@ -12,3 +12,7 @@ export interface ICreateUserContent {
   content_type: UserContentTypes;
   content?: string;
 }
+
+export interface IUserContentUpdate {
+  content: string;
+}

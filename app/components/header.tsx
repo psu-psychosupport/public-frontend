@@ -21,7 +21,9 @@ export default function Header() {
           </Link>
 
           <Box display={"flex"} gap={2}>
+            <Link to={"/me/bookmarks"}>
             <IconBookmark />
+            </Link>
             <Link to={"/me"}>
               <Box
                 sx={{

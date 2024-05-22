@@ -5,36 +5,49 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import React, { useImperativeHandle, useState } from "react";
+import React, { useImperativeHandle, useRef, useState } from "react";
 import StyledInput from "~/components/StyledInput";
 
 export interface UserNoteDialogMethods {
-  open: () => void;
+  open: (initialContentValue: string, props: any) => void;
   close: () => void;
 }
 
 export interface UserNoteDialogProps {
-  content: string;
-  onSubmit: (content: string) => void;
+  content?: string;
+  onSubmit: (content: string, props: any) => void;
+  isNewNote: boolean;
 }
 
 const UserNoteDialog = React.forwardRef<
   UserNoteDialogMethods,
   UserNoteDialogProps
->(({ content, onSubmit }, ref) => {
-  const [$content, setContent] = useState<string>(content);
+>(({ content, onSubmit, isNewNote }, ref) => {
+  const [$content, setContent] = useState<string | undefined>(content);
+  const propsRef = useRef({});
   const [isOpen, setOpen] = useState(false);
   useImperativeHandle(
     ref,
     () => ({
-      open: () => setOpen(true),
-      close: () => setOpen(false),
+      open: (initialContentValue, props) => {
+        if (initialContentValue) {
+          setContent(initialContentValue);
+        }
+        propsRef.current = props;
+        setOpen(true);
+      },
+      close: () => {
+        propsRef.current = {};
+        setOpen(false);
+      },
     }),
-    [],
+    []
   );
 
   return (
     <Dialog
+      fullWidth
+      maxWidth={"md"}
       open={isOpen}
       onClose={() => setOpen(false)}
       PaperProps={{
@@ -42,11 +55,13 @@ const UserNoteDialog = React.forwardRef<
         onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          onSubmit(formData.get("content")! as string);
+          onSubmit(formData.get("content")! as string, propsRef.current);
         },
       }}
     >
-      <DialogTitle>Добавление заметки</DialogTitle>
+      <DialogTitle>
+        {isNewNote ? "Добавление" : "Редактирование"} заметки
+      </DialogTitle>
       <DialogContent>
         <StyledInput
           id={"content"}
@@ -55,6 +70,8 @@ const UserNoteDialog = React.forwardRef<
           value={$content}
           onChange={(event) => setContent(event.target.value)}
           placeholder={"Текстовая информация"}
+          multiline
+          sx={{ my: 2, p: 2 }}
         />
       </DialogContent>
       <DialogActions>
