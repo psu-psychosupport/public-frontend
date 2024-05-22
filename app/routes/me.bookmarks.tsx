@@ -39,6 +39,9 @@ export default function UserBookmarksRoute() {
       <Typography fontSize={30} color={"#496CC6"} mb={2}>
         Закладки
       </Typography>
+      {!bookmarks.length && (
+        <Typography variant={"h6"}>У вас нет добавленных закладок</Typography>
+      )}
       <Stack gap={1}>
         {bookmarks.map((bookmark) => (
           <Link

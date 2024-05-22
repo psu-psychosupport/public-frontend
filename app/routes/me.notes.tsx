@@ -52,8 +52,11 @@ export default function UserNotesRoute() {
   return (
     <Stack>
       <Typography fontSize={30} color={"#496CC6"} mb={2}>
-        Закладки
+        Заметки
       </Typography>
+      {!notes.length && (
+        <Typography variant={"h6"}>У вас нет добавленных заметок</Typography>
+      )}
       <Stack gap={1}>
         {notes.map((note) => (
           <Stack
