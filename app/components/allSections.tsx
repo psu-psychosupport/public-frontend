@@ -31,7 +31,7 @@ export default function AllSections({
                     <LinkWrapper category={category}>
                       <p
                         style={{
-                          color: "#496CC6",
+                          color: "#000000",
                           fontSize: 18,
                           fontWeight: "500",
                           margin: "1% 2% 1% 2%",

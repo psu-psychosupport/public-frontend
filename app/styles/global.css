@@ -1,5 +1,6 @@
 body {
-  background: url("pattern.png"), linear-gradient(#D0EEFF, #D7D2FF) fixed;
+  background: linear-gradient(#D0EEFF, #D7D2FF) fixed;
+  /* url("pattern.png"),  */
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -11,7 +12,7 @@ body {
 }
 
 .buttonSearch {
-  --box-shadow-color: #638EFF; /* Declaring the variable */
+  --box-shadow-color: #FFFFFF; /* Declaring the variable */
   box-shadow: 0px 0px 7px var(--box-shadow-color) !important;
 }
 
@@ -64,9 +65,9 @@ body {
 }
 
 .itemQuestion {
-  --box-shadow-color: #638EFF; /* Declaring the variable */
+  --box-shadow-color: #FFFFFF; /* Declaring the variable */
   box-shadow: 0px 0px 7px var(--box-shadow-color) !important;
-  background-color: white;
+  border: 3px solid #FFFFFF;
   border-radius: 4px;
   display: flex;
   overflow-wrap: break-word;
@@ -85,7 +86,6 @@ body {
 }
 
 .itemNameSection {
-  background-color: white;
   padding-left: 2%;
   border-radius: 4px;
   display: flex;
@@ -93,6 +93,9 @@ body {
   word-breaK:break-word;
   align-items: center;
   margin-bottom: 1%;
+  --box-shadow-color: #FFFFFF; /* Declaring the variable */
+  box-shadow: 0px 0px 7px var(--box-shadow-color) !important;
+  border: 2px solid #FFFFFF;
 }
 
 .highlight-text {

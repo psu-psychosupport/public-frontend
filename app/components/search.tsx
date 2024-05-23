@@ -54,11 +54,11 @@ export default function ComponentSearch() {
             flex: 1,
             paddingY: 1,
             paddingX: 2,
-            bgcolor: "#ffffff",
+            border: "2px solid #FFFFFF",
             borderRadius: "4px",
-            color: "#496CC6",
+            color: "#000000",
             fontSize: "18px",
-            boxShadow: "0px 0px 7px #638EFF",
+            boxShadow: "0px 0px 7px #FFFFFF",
             zIndex: 2,
           }}
           fullWidth={true}
@@ -75,7 +75,7 @@ export default function ComponentSearch() {
               backgroundColor: "#FFFFFF",
               position: "absolute",
               top: "55px",
-              boxShadow: "0px 0px 7px #638EFF",
+              boxShadow: "0px 0px 7px #FFFFFF",
               borderRadius: "4px",
               py: 2,
               zIndex: 2,
@@ -104,12 +104,11 @@ export default function ComponentSearch() {
         className="buttonSearch"
         children={<IconSearch />}
         sx={{
-          bgcolor: "white",
-          width: 48,
-          height: 48,
+          width: 54,
+          height: 54,
           borderRadius: "4px",
-          boxShadow: 5,
           zIndex: 2,
+          border: "2px solid #FFFFFF",
         }}
       />
       {data && (

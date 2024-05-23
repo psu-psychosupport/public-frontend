@@ -19,7 +19,7 @@ export default function PopularQuestions({ posts }: { posts: IPost[] }) {
               style={{ textDecoration: "none", color: "inherit" }}
               key={post.id}
             >
-              <p style={{ color: "#496CC6", fontSize: 18, fontWeight: "600" }}>
+              <p style={{ color: "#303044", fontSize: 18, fontWeight: "600" }}>
                 {getPostName(post)}
               </p>
             </Link>
