@@ -1,19 +1,27 @@
 import { MDXEditor } from "./editor.client";
-import React, { forwardRef } from "react";
-import {plugins} from "./plugins";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { plugins } from "./plugins";
 import { MDXEditorMethods } from "@mdxeditor/editor";
-import "./inter.css"
-
+import "./inter.css";
 
 export interface EditorProps {
   content: string;
 }
 
 const MarkdownViewer = forwardRef<MDXEditorMethods, EditorProps>(
-  ({ content}, ref) => {
+  ({ content }, ref) => {
+    // MDXEditor не обновляет внутреннее состояние текста при передаче нового, поэтому используем его методы для установки
+    const innerRef = useRef<MDXEditorMethods>();
+
+    useImperativeHandle(ref, () => innerRef.current);
+
+    useEffect(() => {
+      innerRef.current?.setMarkdown(content);
+    }, [content]);
+
     return (
       <MDXEditor
-        ref={ref}
+        ref={innerRef}
         markdown={content}
         plugins={plugins}
         contentEditableClassName={"inter"}
