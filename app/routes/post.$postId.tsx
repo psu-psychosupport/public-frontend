@@ -90,7 +90,7 @@ export default function Post() {
 
   const onBookmarkButtonClick = async () => {
     await fetcher.submit(
-      { goal: bookmark ? "delete-bookmark" : "add-bookmark", postId: post.id, contentId: bookmark?.id },
+      { goal: bookmark ? "remove-bookmark" : "add-bookmark", postId: post.id, contentId: bookmark?.id },
       { method: "POST", encType: "application/json" },
     );
   };
