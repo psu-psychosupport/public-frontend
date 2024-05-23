@@ -69,7 +69,7 @@ export default function MyAccountLayout() {
         </Link>
         {(user.permissions & 1) === 1 && (
           <Link
-            to={"/admin"}
+            to={"https://stoboi.damego.ru/admin"} // TODO: FUCK IT
             style={{ textDecoration: "none", color: "#303044" }}
           >
             Панель управления
