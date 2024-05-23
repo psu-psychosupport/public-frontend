@@ -68,12 +68,12 @@ export default function MyAccountLayout() {
           Заметки
         </Link>
         {(user.permissions & 1) === 1 && (
-          <Link
-            to={"https://stoboi.damego.ru/admin"} // TODO: FUCK IT
+          <a
+            href={"https://stoboi.damego.ru/admin"} // TODO: FUCK IT
             style={{ textDecoration: "none", color: "#303044" }}
           >
             Панель управления
-          </Link>
+          </a>
         )}
       </Stack>
 
