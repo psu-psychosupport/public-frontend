@@ -19,38 +19,50 @@ import MarkdownViewer from "~/components/markdownEditor/MarkdownViewer";
 import { ClientOnly } from "remix-utils/client-only";
 import { UserContentTypes } from "~/api/types/enums";
 import useAsyncFetcher from "~/hooks/useAsyncFetcher";
-import UserNoteDialog, { UserNoteDialogMethods } from "~/components/modals/UserNoteDialog";
+import UserNoteDialog, {
+  UserNoteDialogMethods,
+} from "~/components/modals/UserNoteDialog";
 import { useRef } from "react";
 import PostContentSearch from "~/components/PostContentSearch";
-import {MDXEditorMethods} from "@mdxeditor/editor";
+import { MDXEditorMethods } from "@mdxeditor/editor";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   if (!params.postId || Number.isNaN(Number.parseInt(params.postId))) {
-    return {post: null, note: null, bookmark: null};
+    return { post: null, note: null, bookmark: null, category: null };
   }
   const postResponse = await httpClient.getPostById(
-    Number.parseInt(params.postId),
+    Number.parseInt(params.postId)
   );
 
   if (postResponse.error) {
-    return json({post: null, note: null, bookmark: null});
+    return json({ post: null, note: null, bookmark: null, category: null });
   }
+
+  const categoryResponse = await httpClient.getCategory(
+    postResponse.data!.category_id
+  );
 
   const userContentResponse = await httpClient.getUserContentList({
     postId: postResponse.data!.id,
   });
 
   if (userContentResponse.error || !userContentResponse.data?.length) {
-    return json({ post: postResponse.data, note: null, bookmark: null });
+    return json({
+      post: postResponse.data,
+      note: null,
+      bookmark: null,
+      category: categoryResponse.data,
+    });
   }
 
   return json({
     post: postResponse.data,
+    category: categoryResponse.data,
     note: userContentResponse.data.find(
-      (content) => content.content_type === UserContentTypes.NOTE,
+      (content) => content.content_type === UserContentTypes.NOTE
     ),
     bookmark: userContentResponse.data.find(
-      (content) => content.content_type === UserContentTypes.BOOKMARK,
+      (content) => content.content_type === UserContentTypes.BOOKMARK
     ),
   });
 }
@@ -72,13 +84,13 @@ export async function action({ request }: ActionFunctionArgs) {
       content,
     });
   } else if (goal === "update-note") {
-    await httpClient.updateUserContent(contentId, {content});
+    await httpClient.updateUserContent(contentId, { content });
   }
-  return {status: true};
+  return { status: true };
 }
 
 export default function Post() {
-  const { post, note, bookmark } = useLoaderData<typeof loader>();
+  const { post, category, note, bookmark } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const fetcher = useAsyncFetcher();
   const noteDialogRef = useRef<UserNoteDialogMethods>();
@@ -90,23 +102,23 @@ export default function Post() {
 
   const onBookmarkButtonClick = async () => {
     await fetcher.submit(
-      { goal: bookmark ? "remove-bookmark" : "add-bookmark", postId: post.id, contentId: bookmark?.id },
-      { method: "POST", encType: "application/json" },
+      {
+        goal: bookmark ? "remove-bookmark" : "add-bookmark",
+        postId: post.id,
+        contentId: bookmark?.id,
+      },
+      { method: "POST", encType: "application/json" }
     );
   };
 
   const onNoteUpdate = async (content: string) => {
     const goal = note ? "update-note" : "add-note";
     await fetcher.submit(
-      {goal, contentId: note?.id, postId: post.id, content},
-      {method: "POST", encType: "application/json"}
+      { goal, contentId: note?.id, postId: post.id, content },
+      { method: "POST", encType: "application/json" }
     );
     noteDialogRef.current.close();
-  }
-
-  const onSearch = (value: string) => {
-    
-  }
+  };
 
   return (
     <Container
@@ -119,7 +131,7 @@ export default function Post() {
         <PostContentSearch onTextChange={onSearch} />
       </Container>
       */}
-      
+
       <Box sx={{ display: "flex", gap: 2, flexGrow: 1, pb: 3 }}>
         <Stack
           spacing={1.5}
@@ -134,7 +146,11 @@ export default function Post() {
             flexBasis: "25%",
           }}
         >
-          <Stack sx={{ alignItems: "center", mb: 2, gap: 1 }} direction={"row"}>
+          <Stack
+            sx={{ alignItems: "center", mb: 2, gap: 1 }}
+            direction={"row"}
+            justifyContent={"center"}
+          >
             <IconButton
               onClick={() => navigate("/")}
               className="buttonIcon"
@@ -150,7 +166,9 @@ export default function Post() {
             <IconButton
               className="buttonIcon"
               children={
-                <IconBookmark color={bookmark ? colors.yellow.A700 : undefined} />
+                <IconBookmark
+                  color={bookmark ? colors.yellow.A700 : undefined}
+                />
               }
               onClick={onBookmarkButtonClick}
               sx={{
@@ -175,34 +193,42 @@ export default function Post() {
             />
           </Stack>
 
-          <Typography sx={{ color: "#496CC6", fontSize: 18 }}>
-            {post.category.name}
+          <Typography
+            sx={{ color: "#496CC6", fontSize: 18, fontWeight: "500" }}
+          >
+            {category.name}
           </Typography>
-          {post.category.subcategories &&
-            post.category.subcategories.map((subcategory) => (
-              <Box
-                key={subcategory.id}
-                sx={{ pl: 1.5, display: "flex", gap: 1.2, mb: 1 }}
-              >
-                <Box
-                  mt={1}
-                  minWidth={"9px"}
-                  height={"11px"}
-                  borderRadius={"4px"}
-                  bgcolor={getRandomColor}
-                />
-                <Link
-                  to={"#"}
-                  style={{
-                    textDecoration: "none",
-                    color: "#303044",
-                    fontSize: 18,
-                  }}
-                >
-                  {subcategory.name}
-                </Link>
-              </Box>
-            ))}
+          {category.subcategories &&
+            category.subcategories.map(
+              (subcategory) =>
+                subcategory.post && (
+                  <Box
+                    key={subcategory.id}
+                    sx={{ pl: 1.5, display: "flex", gap: 1.2, mb: 1 }}
+                  >
+                    <Box
+                      mt={1}
+                      minWidth={"9px"}
+                      height={"11px"}
+                      borderRadius={"4px"}
+                      bgcolor={getRandomColor}
+                    />
+                    <Link
+                      to={`/post/${subcategory.post.id}`}
+                      style={{
+                        textDecoration: "none",
+                        color:
+                          post.id === subcategory.post.id
+                            ? "#638EFF"
+                            : "#303044",
+                        fontSize: 18,
+                      }}
+                    >
+                      {subcategory.name}
+                    </Link>
+                  </Box>
+                )
+            )}
         </Stack>
 
         <Container
@@ -224,15 +250,22 @@ export default function Post() {
           <ClientOnly
             fallback={
               <Box>
-                <Typography>Загрузка редактора...</Typography>
+                <Typography>Загрузка текста...</Typography>
               </Box>
             }
           >
-            {() => <MarkdownViewer content={post.content} />}
+            {() => (
+              <MarkdownViewer viewerRef={viewerRef} content={post.content} />
+            )}
           </ClientOnly>
         </Container>
       </Box>
-      <UserNoteDialog isNewNote={!note} ref={noteDialogRef} content={note?.content} onSubmit={onNoteUpdate} />
+      <UserNoteDialog
+        isNewNote={!note}
+        ref={noteDialogRef}
+        content={note?.content}
+        onSubmit={onNoteUpdate}
+      />
     </Container>
   );
 }
