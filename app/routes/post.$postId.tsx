@@ -15,7 +15,7 @@ import { getRandomColor } from "~/utils/getRandomColor";
 import { httpClient } from "~/api/http";
 import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import getPostName from "~/utils/getPostName";
-import MarkdownViewer from "~/components/markdownEditor/MarkdownViewer";
+import { MarkdownViewer } from "mdx-descriptors/src";
 import { ClientOnly } from "remix-utils/client-only";
 import { UserContentTypes } from "~/api/types/enums";
 import useAsyncFetcher from "~/hooks/useAsyncFetcher";
