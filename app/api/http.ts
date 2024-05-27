@@ -96,7 +96,7 @@ export default class HttpClient {
     );
 
     if (response.status >= 400) {
-      if (response.data.detail.code === ErrorResponseCodes.TOKEN_EXPIRED) {
+      if (response.data.detail.code === ErrorResponseCodes.TOKEN_EXPIRED && sendCredentials) {
         await this.refreshAccessToken();
         await this.request(method, endpoint, { data, file, asFormData });
       }

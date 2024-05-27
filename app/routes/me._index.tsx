@@ -31,6 +31,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const session = await sessionStorage.getSession(
       request.headers.get("cookie"),
     );
+    httpClient.setTokens({accessToken: null, refreshToken: null});
     return redirect("/", {
       headers: {
         "Set-Cookie": await sessionStorage.destroySession(session),
