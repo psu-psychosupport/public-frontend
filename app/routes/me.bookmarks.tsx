@@ -1,15 +1,15 @@
 import { httpClient } from "~/api/http";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { Stack, Typography, Box, IconButton } from "@mui/material";
 import { Link, useLoaderData } from "@remix-run/react";
 import { UserContentTypes } from "~/api/types/enums";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import useAsyncFetcher from "~/hooks/useAsyncFetcher";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   const res = await httpClient.getUserContentList({
     type: UserContentTypes.BOOKMARK,
-  });
+  })(request);
   return json(res.data);
 }
 
@@ -17,7 +17,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const { goal, contentId } = await request.json();
 
   if (goal === "delete-bookmark") {
-    await httpClient.deleteUserContent(contentId);
+    await httpClient.deleteUserContent(contentId)(request);
   }
 
   return { status: true };

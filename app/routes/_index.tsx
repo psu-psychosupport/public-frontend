@@ -20,8 +20,8 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const [popularPostsRes, categoriesRes] = await Promise.all([
-    httpClient.getPopularPosts(),
-    httpClient.getCategories(),
+    httpClient.getPopularPosts()(request),
+    httpClient.getCategories()(request),
   ]);
   return json({
     posts: popularPostsRes.data!,
@@ -33,7 +33,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const { goal, query } = await request.json();
 
   if (goal === "search") {
-    const res = await httpClient.searchPosts(query);
+    const res = await httpClient.searchPosts(query)(request);
     return json(res.data);
   }
 }

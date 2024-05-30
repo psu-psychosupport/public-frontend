@@ -26,13 +26,13 @@ import { useRef } from "react";
 import PostContentSearch from "~/components/PostContentSearch";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({request, params }: LoaderFunctionArgs) {
   if (!params.postId || Number.isNaN(Number.parseInt(params.postId))) {
     return { post: null, note: null, bookmark: null, category: null };
   }
   const postResponse = await httpClient.getPostById(
     Number.parseInt(params.postId)
-  );
+  )(request);
 
   if (postResponse.error) {
     return json({ post: null, note: null, bookmark: null, category: null });
@@ -40,11 +40,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const categoryResponse = await httpClient.getCategory(
     postResponse.data!.category_id
-  );
+  )(request);
 
   const userContentResponse = await httpClient.getUserContentList({
     postId: postResponse.data!.id,
-  });
+  })(request);
 
   if (userContentResponse.error || !userContentResponse.data?.length) {
     return json({
@@ -68,25 +68,32 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { goal, postId, content, contentId } = await request.json();
-  console.log(goal, postId, content, contentId);
+  const { goal, postId, content, contentId, testId, answers } =
+    await request.json();
+
   if (goal === "add-bookmark") {
     await httpClient.addUserContent({
       post_id: postId,
       content_type: UserContentTypes.BOOKMARK,
-    });
+    })(request);
   } else if (goal === "remove-bookmark" || goal === "remove-note") {
-    await httpClient.deleteUserContent(contentId);
+    await httpClient.deleteUserContent(contentId)(request);
   } else if (goal === "add-note") {
     await httpClient.addUserContent({
       post_id: postId,
       content_type: UserContentTypes.NOTE,
       content,
-    });
+    })(request);
   } else if (goal === "update-note") {
-    await httpClient.updateUserContent(contentId, { content });
+    await httpClient.updateUserContent(contentId, { content })(request);
+  } else if (goal === "get-test") {
+    const res = await httpClient.getTestById(testId)(request);
+    return json({ goal, ...res });
+  } else if (goal === "submit-test-answers") {
+    const res = await httpClient.completeTest(testId, answers)(request);
+    return json(res);
   }
-  return { status: true };
+  return json({ status: true });
 }
 
 export default function Post() {

@@ -16,22 +16,22 @@ export async function action({ request }: ActionFunctionArgs) {
   const { name, goal, email }: UserActionPayload = await request.json();
 
   if (name) {
-    const res = await httpClient.changeUserName(name);
+    const res = await httpClient.changeUserName(name)(request);
     return json(res);
   }
 
   if (goal === "change-email") {
-    const res = await httpClient.requestChangeUserEmail(email!);
+    const res = await httpClient.requestChangeUserEmail(email!)(request);
     return json(res);
   } else if (goal === "change-password") {
-    const res = await httpClient.requestChangeUserPassword();
+    const res = await httpClient.requestChangeUserPassword()(request);
     return json(res);
   }
   else if (goal === "logout") {
     const session = await sessionStorage.getSession(
       request.headers.get("cookie"),
     );
-    httpClient.setTokens({accessToken: null, refreshToken: null});
+
     return redirect("/", {
       headers: {
         "Set-Cookie": await sessionStorage.destroySession(session),

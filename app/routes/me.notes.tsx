@@ -1,5 +1,5 @@
 import { httpClient } from "~/api/http";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { Stack, Typography, Box, IconButton } from "@mui/material";
 import { Link, useLoaderData } from "@remix-run/react";
 import { UserContentTypes } from "~/api/types/enums";
@@ -10,10 +10,10 @@ import UserNoteDialog, {
 } from "~/components/modals/UserNoteDialog";
 import { useRef } from "react";
 
-export async function loader() {
+export async function loader({request}: LoaderFunctionArgs) {
   const res = await httpClient.getUserContentList({
     type: UserContentTypes.NOTE,
-  });
+  })(request);
   return json(res.data);
 }
 
@@ -21,9 +21,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const { goal, contentId, content } = await request.json();
 
   if (goal === "update-note") {
-    await httpClient.updateUserContent(contentId, { content });
+    await httpClient.updateUserContent(contentId, { content })(request);
   } else if (goal === "delete-note") {
-    await httpClient.deleteUserContent(contentId);
+    await httpClient.deleteUserContent(contentId)(request);
   }
 
   return { status: true };

@@ -34,7 +34,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const { username, email, password }: IUserRegisterForm = await request.json();
 
-  const res = await httpClient.signUp(username, email, password);
+  const res = await httpClient.signUp(username, email, password)(request);
 
   if (res.error) {
     return res.error;

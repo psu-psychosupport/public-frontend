@@ -40,10 +40,10 @@ export async function action({ request }: ActionFunctionArgs) {
     request.headers.get("cookie"),
   );
 
-  const res = await httpClient.signIn(email, password);
+  const res = await httpClient.signIn(email, password)(request);
   if (res.error) {
     if (res.error.code === ErrorResponseCodes.USER_NOT_VERIFIED) {
-      await httpClient.requestChangeUserEmail(email);
+      await httpClient.requestChangeUserEmail(email)(request);
       throw redirect(`/acc-confirm?email=${email}`);
     }
     return json(res.error);

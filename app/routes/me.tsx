@@ -14,12 +14,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   if (!accessToken || !refreshToken) throw redirect("/login");
 
-  httpClient.setTokens({ accessToken, refreshToken });
-
-  const response = await httpClient.getMe();
+  const response = await httpClient.getMe()(request);
   if (response.error) {
     if (!refreshToken) throw redirect("/signin");
-    const res = await httpClient.refreshAccessToken();
+    const res = await httpClient.refreshAccessToken()(request);
     if (res.error) throw redirect("/signin");
     session.set("access_token", res.data?.access_token);
     const headers = new Headers();
@@ -66,6 +64,12 @@ export default function MyAccountLayout() {
           style={{ textDecoration: "none", color: "#303044" }}
         >
           Заметки
+        </Link>
+        <Link
+          to={"/me/tests"}
+          style={{ textDecoration: "none", color: "#303044" }}
+        >
+          Пройденные тесты
         </Link>
         {(user.permissions & 1) === 1 && (
           <a

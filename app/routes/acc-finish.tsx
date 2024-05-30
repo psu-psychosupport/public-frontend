@@ -18,7 +18,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw redirect("/");
   }
 
-  const res = await httpClient.changeUserEmail(token);
+  const res = await httpClient.changeUserEmail(token)(request);
   return json(res);
 }
 

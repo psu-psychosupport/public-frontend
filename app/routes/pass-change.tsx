@@ -38,7 +38,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   const { password, token }: IChangePasswordPayload = await request.json();
 
-  const res = await httpClient.changePassword(token, password);
+  const res = await httpClient.changePassword(token, password)(request);
 
   if (res.error) {
     return res.error;
